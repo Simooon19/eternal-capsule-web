@@ -40,21 +40,28 @@ export interface GuestbookEntry {
 
 export interface Memorial {
   _id: string;
-  title: string;
+  title?: string;
+  name?: string;
   subtitle?: string;
+  description?: string;
   slug: {
     current: string;
   };
+  born: string;
+  died: string;
   coverImage?: Image;
   gallery: Image[];
   storyBlocks: StoryBlock[];
+  guestbook?: GuestbookEntry[];
   bornAt?: {
     location: string;
+    coordinates?: Coordinates;
   };
   diedAt?: {
     location: string;
+    coordinates?: Coordinates;
   };
-  status: 'draft' | 'published';
+  status: 'draft' | 'published' | 'pending' | 'approved' | 'rejected';
   createdAt: string;
   updatedAt: string;
 }
