@@ -40,6 +40,10 @@ export interface GuestbookEntry {
 
 export interface Memorial {
   _id: string;
+  name: string;
+  description?: string;
+  born?: string;
+  died?: string;
   title: string;
   subtitle?: string;
   slug: {
@@ -50,13 +54,17 @@ export interface Memorial {
   storyBlocks: StoryBlock[];
   bornAt?: {
     location: string;
+    coordinates?: Coordinates;
   };
   diedAt?: {
     location: string;
+    coordinates?: Coordinates;
   };
   status: 'draft' | 'published';
   createdAt: string;
   updatedAt: string;
+  _createdAt?: string;
+  _updatedAt?: string;
 }
 
 export interface SearchFilters {
