@@ -29,7 +29,9 @@ export default function ExploreMemorials() {
           diedAt,
           createdAt,
           updatedAt,
-          status
+          status,
+          gallery,
+          storyBlocks
         }`;
         
         const result = await client.fetch(query);
@@ -47,16 +49,28 @@ export default function ExploreMemorials() {
   }, []);
 
   const filteredMemorials = useMemo(() => {
+    console.log('Filtering memorials:', {
+      totalMemorials: memorials.length,
+      searchQuery,
+      filters
+    });
+    
     return memorials.filter((memorial: Memorial) => {
       const matchesSearch = memorial.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (memorial.subtitle && memorial.subtitle.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      console.log('Memorial search match:', {
+        title: memorial.title,
+        matchesSearch,
+        searchQuery
+      });
       
       const matchesYearRange = filters.yearRange === 'all' ||
         (filters.yearRange === 'recent' && new Date(memorial.createdAt).getFullYear() >= new Date().getFullYear() - 1) ||
         (filters.yearRange === 'old' && new Date(memorial.createdAt).getFullYear() < new Date().getFullYear() - 1);
 
-      const matchesPhotos = !filters.hasPhotos || memorial.gallery.length > 0;
-      const matchesStories = !filters.hasStories || memorial.storyBlocks.length > 0;
+      const matchesPhotos = !filters.hasPhotos || (memorial.gallery && memorial.gallery.length > 0);
+      const matchesStories = !filters.hasStories || (memorial.storyBlocks && memorial.storyBlocks.length > 0);
 
       return matchesSearch && matchesYearRange && matchesPhotos && matchesStories;
     });
