@@ -7,7 +7,7 @@ export default defineType({
   fields: [
     defineField({
       name: 'author',
-      title: 'Author',
+      title: 'Author Name',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
@@ -15,6 +15,7 @@ export default defineType({
       name: 'message',
       title: 'Message',
       type: 'text',
+      rows: 4,
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -39,17 +40,62 @@ export default defineType({
       initialValue: 'pending',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'reactions',
+      title: 'Reactions',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'emoji',
+              title: 'Emoji',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'count',
+              title: 'Count',
+              type: 'number',
+              initialValue: 0,
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'flagged',
+      title: 'Flagged for Review',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'ipAddress',
+      title: 'IP Address',
+      type: 'string',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Created At',
+      type: 'datetime',
+      readOnly: true,
+      initialValue: () => new Date().toISOString(),
+    }),
   ],
   preview: {
     select: {
       title: 'author',
       subtitle: 'message',
       status: 'status',
+      createdAt: 'createdAt',
     },
-    prepare({ title, subtitle, status }) {
+    prepare({ title, subtitle, status, createdAt }) {
       return {
-        title: `${title} (${status})`,
-        subtitle: subtitle?.slice(0, 50) + (subtitle?.length > 50 ? '...' : ''),
+        title,
+        subtitle: subtitle.substring(0, 100) + (subtitle.length > 100 ? '...' : ''),
+        description: `${status} - ${new Date(createdAt).toLocaleDateString()}`,
       };
     },
   },

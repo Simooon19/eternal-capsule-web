@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { urlForImage } from '@/lib/sanity';
 import { Memorial } from '@/types/memorial';
@@ -14,29 +15,36 @@ export default function MemorialCard({ memorial }: MemorialCardProps) {
   }
 
   return (
-    <Link href={`/memorial/${memorial.slug.current}`} className="block">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
-        <div className="relative h-48">
+    <Link href={`/memorial/${memorial.slug.current}`}>
+      <div className="group cursor-pointer">
+        <div className="relative overflow-hidden rounded-lg bg-gray-100 aspect-[4/3]">
           {memorial.gallery && memorial.gallery[0] ? (
             <img
               src={urlForImage(memorial.gallery[0]).width(400).height(300).url()}
-              alt={memorial.gallery[0].alt || memorial.name}
+              alt={memorial.gallery[0].alt || memorial.title}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400 dark:text-gray-500">No image available</span>
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+              <span className="text-gray-500 dark:text-gray-400">No Image</span>
             </div>
           )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </div>
-        <div className="p-4">
-          <h3 className="text-xl font-semibold mb-2">{memorial.name}</h3>
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">
-            {new Date(memorial.born).getFullYear()} - {new Date(memorial.died).getFullYear()}
-          </p>
-          <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
-            {memorial.description}
-          </p>
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            {memorial.title}
+          </h3>
+          {memorial.subtitle && (
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
+              {memorial.subtitle}
+            </p>
+          )}
+          <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
+            {memorial.bornAt?.location && memorial.diedAt?.location && (
+              <span>{memorial.bornAt.location} - {memorial.diedAt.location}</span>
+            )}
+          </div>
         </div>
       </div>
     </Link>

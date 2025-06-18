@@ -7,38 +7,41 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'name',
+      name: 'title',
       title: 'Name',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Subtitle',
+      type: 'string',
+      description: 'Optional subtitle or life motto',
+    }),
+    defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'URL Slug',
       type: 'slug',
       options: {
-        source: 'name',
+        source: 'title',
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'born',
-      title: 'Date of Birth',
-      type: 'date',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
       name: 'bornAt',
-      title: 'Birth Location',
+      title: 'Birth Information',
       type: 'object',
-      components: {
-        input: LocationInput
-      },
       fields: [
         {
+          name: 'date',
+          title: 'Date of Birth',
+          type: 'date',
+          validation: (Rule) => Rule.required(),
+        },
+        {
           name: 'location',
-          title: 'Location',
+          title: 'Birth Location',
           type: 'string',
           description: 'City, Country',
           validation: (Rule) => Rule.required(),
@@ -47,7 +50,7 @@ export default defineType({
           name: 'coordinates',
           title: 'Coordinates',
           type: 'geopoint',
-          readOnly: true,
+          description: 'Click on the map to set the location',
         },
       ],
       options: {
@@ -56,25 +59,19 @@ export default defineType({
       },
     }),
     defineField({
-      name: 'died',
-      title: 'Date of Passing',
-      type: 'date',
-      validation: (Rule) => [
-        Rule.required(),
-        Rule.min(Rule.valueOfField('born')).error('Date of passing must be after date of birth'),
-      ],
-    }),
-    defineField({
       name: 'diedAt',
-      title: 'Death Location',
+      title: 'Death Information',
       type: 'object',
-      components: {
-        input: LocationInput
-      },
       fields: [
         {
+          name: 'date',
+          title: 'Date of Passing',
+          type: 'date',
+          validation: (Rule) => Rule.required(),
+        },
+        {
           name: 'location',
-          title: 'Location',
+          title: 'Death Location',
           type: 'string',
           description: 'City, Country',
           validation: (Rule) => Rule.required(),
@@ -83,7 +80,7 @@ export default defineType({
           name: 'coordinates',
           title: 'Coordinates',
           type: 'geopoint',
-          readOnly: true,
+          description: 'Click on the map to set the location',
         },
       ],
       options: {
@@ -135,6 +132,11 @@ export default defineType({
               title: 'Alternative Text',
               validation: (Rule) => Rule.required(),
             },
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Caption',
+            },
           ],
         },
       ],
@@ -164,10 +166,172 @@ export default defineType({
       ],
     }),
     defineField({
-      name: 'ntagUid',
+      name: 'videos',
+      title: 'Video Memories',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'video',
+              title: 'Video File',
+              type: 'file',
+              options: {
+                accept: 'video/*',
+              },
+            },
+            {
+              name: 'title',
+              title: 'Video Title',
+              type: 'string',
+            },
+            {
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 3,
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'audioMemories',
+      title: 'Audio Memories',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'audio',
+              title: 'Audio File',
+              type: 'file',
+              options: {
+                accept: 'audio/*',
+              },
+            },
+            {
+              name: 'title',
+              title: 'Audio Title',
+              type: 'string',
+            },
+            {
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 3,
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'timeline',
+      title: 'Life Timeline',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'date',
+              title: 'Date',
+              type: 'date',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'title',
+              title: 'Event Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 3,
+            },
+            {
+              name: 'image',
+              title: 'Event Image',
+              type: 'image',
+              options: { hotspot: true },
+              fields: [
+                {
+                  name: 'alt',
+                  type: 'string',
+                  title: 'Alternative Text',
+                },
+              ],
+            },
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              subtitle: 'date',
+              media: 'image',
+            },
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: 'Veteran', value: 'veteran' },
+          { title: 'Musician', value: 'musician' },
+          { title: 'Teacher', value: 'teacher' },
+          { title: 'Artist', value: 'artist' },
+          { title: 'Doctor', value: 'doctor' },
+          { title: 'Parent', value: 'parent' },
+          { title: 'Grandparent', value: 'grandparent' },
+          { title: 'Sports', value: 'sports' },
+          { title: 'Volunteer', value: 'volunteer' },
+          { title: 'Business Owner', value: 'business-owner' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'privacy',
+      title: 'Privacy Setting',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Public', value: 'public' },
+          { title: 'Link Only', value: 'link-only' },
+          { title: 'Password Protected', value: 'password-protected' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'public',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'password',
+      title: 'Access Password',
+      type: 'string',
+      hidden: ({ document }) => document?.privacy !== 'password-protected',
+      validation: (Rule) => 
+        Rule.custom((password, context) => {
+          const privacy = (context.document as any)?.privacy;
+          if (privacy === 'password-protected' && !password) {
+            return 'Password is required for password-protected memorials';
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: 'nfcTagUid',
       title: 'NFC Tag UID',
       type: 'string',
       readOnly: true,
+      description: 'Automatically generated unique identifier for NFC tag',
     }),
     defineField({
       name: 'status',
@@ -175,27 +339,91 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Pending', value: 'pending' },
-          { title: 'Approved', value: 'approved' },
+          { title: 'Draft', value: 'draft' },
+          { title: 'Pending Review', value: 'pending' },
+          { title: 'Published', value: 'published' },
           { title: 'Rejected', value: 'rejected' },
+          { title: 'Deleted', value: 'deleted' },
         ],
         layout: 'radio',
       },
-      initialValue: 'pending',
+      initialValue: 'draft',
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'owner',
+      title: 'Memorial Owner',
+      type: 'reference',
+      to: [{ type: 'user' }],
+      description: 'Family member who owns this memorial',
+    }),
+    defineField({
+      name: 'editors',
+      title: 'Funeral Home Editors',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'user' }],
+        },
+      ],
+      description: 'Funeral home staff who can edit this memorial',
+    }),
+    // Analytics fields
+    defineField({
+      name: 'viewCount',
+      title: 'View Count',
+      type: 'number',
+      readOnly: true,
+      initialValue: 0,
+    }),
+    defineField({
+      name: 'scanCount',
+      title: 'Scan Count',
+      type: 'number',
+      readOnly: true,
+      initialValue: 0,
+    }),
+    defineField({
+      name: 'lastScanned',
+      title: 'Last Scanned',
+      type: 'datetime',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Created At',
+      type: 'datetime',
+      readOnly: true,
+      initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: 'updatedAt',
+      title: 'Updated At',
+      type: 'datetime',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'deletedAt',
+      title: 'Deleted At',
+      type: 'datetime',
+      readOnly: true,
+      hidden: ({ document }) => document?.status !== 'deleted',
     }),
   ],
   preview: {
     select: {
-      title: 'name',
-      subtitle: 'born',
+      title: 'title',
+      subtitle: 'bornAt.date',
       media: 'gallery.0',
+      status: 'status',
     },
-    prepare({ title, subtitle, media }) {
+    prepare({ title, subtitle, media, status }) {
       return {
         title,
-        subtitle: `${new Date(subtitle).getFullYear()} - ${new Date(media?.died).getFullYear()}`,
+        subtitle: subtitle ? `Born: ${new Date(subtitle).getFullYear()}` : 'No birth date',
         media,
+        description: `Status: ${status}`,
       };
     },
   },
