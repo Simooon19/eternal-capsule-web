@@ -1,6 +1,8 @@
 {
   "name": "minneslund-web",
   "version": "0.1.0",
+  "description": "Digital memorial platform - Production deployed on Vercel",
+  "homepage": "https://eternal-capsule-alfjhbvch-simon-anderssons-projects-8e7f4176.vercel.app",
   "private": true,
   "scripts": {
     "dev": "next dev",

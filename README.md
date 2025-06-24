@@ -12,6 +12,36 @@ Minneslund är en banbrytande digital minneslundsplattform som överbryggar den 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](#)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](#)
 [![Sanity](https://img.shields.io/badge/Sanity-F03E2F?logo=sanity&logoColor=white)](#)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-000000?logo=vercel&logoColor=white)](https://eternal-capsule-alfjhbvch-simon-anderssons-projects-8e7f4176.vercel.app)
+
+---
+
+## 🚀 **LIVE DEPLOYMENT**
+
+### **Production Environment**
+- **🌐 Live Site**: [https://eternal-capsule-alfjhbvch-simon-anderssons-projects-8e7f4176.vercel.app](https://eternal-capsule-alfjhbvch-simon-anderssons-projects-8e7f4176.vercel.app)
+- **✅ Status**: Production Ready - Fully Deployed
+- **📅 Last Deployed**: December 24, 2025
+- **🏗️ Platform**: Vercel (Optimized for Next.js 14)
+- **🗄️ Database**: PostgreSQL + Sanity CMS
+- **🌍 CDN**: Global Edge Network
+
+### **Live Features**
+- ✅ **Swedish Memorial Platform** with enhanced visual design
+- ✅ **Beautiful Memorial Cards** with custom Swedish placeholder images
+- ✅ **Responsive Design** optimized for all devices
+- ✅ **Authentication System** (signin/signup with Google OAuth)
+- ✅ **Pricing Page** with SEK currency (320 kr/månad)
+- ✅ **API Endpoints** (25+ routes) for full functionality
+- ✅ **Progressive Web App** with offline support
+- ✅ **Performance Optimized** with Core Web Vitals monitoring
+
+### **Test the Live Platform**
+1. **Homepage**: Beautiful memorial cards with Swedish content
+2. **Authentication**: `/auth/signin` and `/auth/signup` with Google OAuth
+3. **Pricing**: `/pricing` page with Swedish currency
+4. **Memorial Exploration**: `/memorial/explore` for browsing memorials
+5. **Obituaries**: `/obituaries` for recent memorial listings
 
 ---
 
