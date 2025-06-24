@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Icon Generator</title>
+</head>
+<body>
+    <h1>Eternal Capsule PWA Icon Generator</h1>
+    <div id="canvases"></div>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const canvasContainer = document.getElementById('canvases');
+        
+        sizes.forEach(size => {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.border = '1px solid #ccc';
+            canvas.style.margin = '10px';
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient (granite to copper)
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#1f2937'); // granite-900
+            gradient.addColorStop(1, '#d97706'); // copper-600
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add memorial symbol (simple eternal flame)
+            ctx.fillStyle = '#f59e0b'; // copper-500
+            ctx.beginPath();
+            
+            // Draw flame shape
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const flameHeight = size * 0.4;
+            const flameWidth = size * 0.2;
+            
+            ctx.moveTo(centerX, centerY + flameHeight/2);
+            ctx.quadraticCurveTo(centerX - flameWidth, centerY, centerX, centerY - flameHeight/2);
+            ctx.quadraticCurveTo(centerX + flameWidth, centerY, centerX, centerY + flameHeight/2);
+            ctx.fill();
+            
+            // Add inner flame
+            ctx.fillStyle = '#fbbf24'; // amber-400
+            ctx.beginPath();
+            const innerHeight = flameHeight * 0.6;
+            const innerWidth = flameWidth * 0.6;
+            ctx.moveTo(centerX, centerY + innerHeight/2);
+            ctx.quadraticCurveTo(centerX - innerWidth, centerY, centerX, centerY - innerHeight/2);
+            ctx.quadraticCurveTo(centerX + innerWidth, centerY, centerX, centerY + innerHeight/2);
+            ctx.fill();
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.textContent = `Download ${size}x${size}`;
+            link.style.display = 'block';
+            link.style.margin = '5px 0';
+            
+            const container = document.createElement('div');
+            container.appendChild(canvas);
+            container.appendChild(link);
+            canvasContainer.appendChild(container);
+        });
+    </script>
+</body>
+</html> 

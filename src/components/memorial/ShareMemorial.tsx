@@ -11,7 +11,9 @@ export function ShareMemorial({ memorial }: ShareMemorialProps) {
   const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
-    setShareUrl(window.location.href);
+    if (typeof window !== 'undefined') {
+      setShareUrl(window.location.href);
+    }
   }, []);
 
   const shareOptions = [
@@ -54,10 +56,11 @@ export function ShareMemorial({ memorial }: ShareMemorialProps) {
             href={option.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-3 bg-white dark:bg-gray-800 rounded-full shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="flex items-center space-x-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
             title={`Share on ${option.platform}`}
           >
-            {option.icon}
+            <span className="text-gray-600 dark:text-gray-300">{option.icon}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{option.platform}</span>
           </a>
         ))}
       </div>

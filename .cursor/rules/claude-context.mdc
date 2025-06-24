@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 🤖 CLAUDE.md Context Rules
+
+## When to Read CLAUDE.md
+
+**ALWAYS READ** `CLAUDE.md` when:
+- Starting work on a new feature or major change
+- User mentions "architecture," "business logic," or "project overview"
+- Making changes to core components (auth, payments, database)
+- Questions about deployment, infrastructure, or technical decisions
+- Working on integrations (Stripe, Sanity, NFC, etc.)
+- User asks "analyze the project" or similar comprehensive requests
+
+**OPTIONAL READ** `CLAUDE.md` when:
+- Making minor UI tweaks or bug fixes
+- Working on single components that don't affect architecture
+- Simple content updates or documentation fixes
+- Quick questions about existing code
+
+**NEVER READ** `CLAUDE.md` for:
+- Typo fixes or minor text changes
+- Simple debugging of specific errors
+- General programming questions unrelated to this project
+
+## When to Update CLAUDE.md
+
+**UPDATE** `CLAUDE.md` when:
+- Business strategy changes (confirmed in this session)
+- New integrations or major dependencies added
+- Architecture patterns change
+- Performance optimizations that affect best practices
+- Deployment or infrastructure changes
+- New business rules or workflows implemented
+
+**DON'T UPDATE** `CLAUDE.md` for:
+- Minor bug fixes
+- Small component changes
+- Temporary workarounds
+- Experimental features (until confirmed permanent)
+
+## Smart Reading Strategy
+
+1. **Check Query Context**: Look for keywords indicating architectural work
+2. **Assess Scope**: Is this a minor change or major feature?
+3. **Read Selectively**: Only consume CLAUDE.md when genuinely needed
+4. **Update Strategically**: Only update when there's lasting impact
+
+This approach balances comprehensive context with efficiency. 

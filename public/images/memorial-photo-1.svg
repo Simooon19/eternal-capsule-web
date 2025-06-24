@@ -1,0 +1,40 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="warmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8F8F7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#F1F1F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8E8E7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D8B4FE;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#C084FC;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Soft background -->
+  <rect width="400" height="300" fill="url(#warmGradient)"/>
+  
+  <!-- Gentle border with rounded corners -->
+  <rect x="15" y="15" width="370" height="270" fill="none" stroke="#C9C9C9" stroke-width="1" rx="8" ry="8" opacity="0.4"/>
+  
+  <!-- Center memorial heart with more gentle design -->
+  <g transform="translate(200,150)" opacity="0.6">
+    <!-- Soft heart shape -->
+    <path d="M0 8 C-12 -8 -28 -8 -28 8 C-28 24 0 36 0 36 C0 36 28 24 28 8 C28 -8 12 -8 0 8 Z" fill="url(#heartGradient)"/>
+  </g>
+  
+  <!-- Delicate corner flourishes -->
+  <g opacity="0.3">
+    <!-- Top corners -->
+    <circle cx="30" cy="30" r="2" fill="#A855F7"/>
+    <circle cx="370" cy="30" r="2" fill="#A855F7"/>
+    <!-- Bottom corners -->
+    <circle cx="30" cy="270" r="2" fill="#A855F7"/>
+    <circle cx="370" cy="270" r="2" fill="#A855F7"/>
+  </g>
+  
+  <!-- Respectful text -->
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#6B21A8" opacity="0.7" font-style="italic">
+    I kärleksfullt minne
+  </text>
+</svg> 

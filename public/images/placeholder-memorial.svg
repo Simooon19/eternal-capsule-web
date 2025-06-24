@@ -1,0 +1,44 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="memorialGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F2F2F2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E3E3E3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#memorialGradient)"/>
+  
+  <!-- Border -->
+  <rect x="10" y="10" width="380" height="280" fill="none" stroke="#CC7A3E" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Center memorial symbol -->
+  <g transform="translate(200,150)" opacity="0.4">
+    <!-- Heart shape -->
+    <path d="M0 0 C-15 -15 -35 -15 -35 5 C-35 25 0 40 0 40 C0 40 35 25 35 5 C35 -15 15 -15 0 0 Z" fill="#CC7A3E"/>
+  </g>
+  
+  <!-- Corner decorative elements -->
+  <g opacity="0.2">
+    <!-- Top left corner -->
+    <path d="M20 20 Q30 20 30 30" fill="none" stroke="#7A8471" stroke-width="1"/>
+    <path d="M20 30 Q20 20 30 20" fill="none" stroke="#7A8471" stroke-width="1"/>
+    
+    <!-- Top right corner -->
+    <path d="M380 20 Q370 20 370 30" fill="none" stroke="#7A8471" stroke-width="1"/>
+    <path d="M380 30 Q380 20 370 20" fill="none" stroke="#7A8471" stroke-width="1"/>
+    
+    <!-- Bottom left corner -->
+    <path d="M20 280 Q30 280 30 270" fill="none" stroke="#7A8471" stroke-width="1"/>
+    <path d="M20 270 Q20 280 30 280" fill="none" stroke="#7A8471" stroke-width="1"/>
+    
+    <!-- Bottom right corner -->
+    <path d="M380 280 Q370 280 370 270" fill="none" stroke="#7A8471" stroke-width="1"/>
+    <path d="M380 270 Q380 280 370 280" fill="none" stroke="#7A8471" stroke-width="1"/>
+  </g>
+  
+  <!-- Gentle text -->
+  <text x="200" y="200" text-anchor="middle" font-family="serif" font-size="12" fill="#707070" opacity="0.6">
+    Memorial Photo
+  </text>
+</svg> 

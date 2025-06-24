@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Production & Deployment - Memorial Platform Reliability
+
+## Memorial Platform Uptime Requirements
+- **99.9% uptime target**: Memorial links may be accessed during funerals
+- **Zero downtime deployments**: Use Vercel's staging/production workflow
+- **Database backup strategy**: Memorial content is irreplaceable
+- **CDN reliability**: Images must load quickly and reliably worldwide
+
+## Pre-Deployment Checklist
+- **Test memorial creation workflow**: Both individual and bulk import
+- **Verify NFC scanning**: Test with actual NFC devices/phones
+- **Validate payment flows**: All subscription tiers and transitions
+- **Check email notifications**: Funeral home and family communications
+- **Performance audit**: Memorial pages must load under 2 seconds
+
+## Environment Management
+- **Environment variables**: Never commit sensitive keys
+- **Secrets rotation**: Regular updates for API keys and tokens
+- **Database migrations**: Test on staging before production
+- **Feature flags**: Gradual rollout for major changes
+
+## Monitoring Production
+- **Health endpoint**: Monitor API and database connectivity
+- **Error tracking**: Sentry for production error monitoring
+- **Performance monitoring**: Core Web Vitals for memorial pages
+- **Business metrics**: Track memorial creation, guestbook usage, NFC scans
+
+## Rollback Strategy
+- **Quick rollback capability**: Memorial platform failures require immediate fixes
+- **Database rollback plan**: Coordinate with Sanity CMS backup strategy
+- **Communication plan**: Notify affected families if memorials are temporarily unavailable
+- **Incident response**: Clear escalation for memorial access issues
+
+## Swedish Market Production Considerations
+- **GDPR compliance**: Proper data handling in production
+- **Swedish hosting**: Consider EU data residency requirements
+- **Currency handling**: SEK pricing and Stripe configuration
+- **Time zones**: Swedish timestamps for memorial dates
+
+Memorial accessibility during emotional moments is critical - production stability is paramount.

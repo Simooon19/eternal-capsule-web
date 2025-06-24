@@ -1,0 +1,27 @@
+# Testing & Quality Assurance - Memorial Platform
+
+## Memorial Platform Testing Priority
+- **Memorial creation flow**: Test both individual and bulk import workflows
+- **NFC integration**: Verify NFC scanning works across devices
+- **Image handling**: Test upload, optimization, and display performance
+- **Guestbook functionality**: Ensure messages and reactions work properly
+
+## E2E Testing Requirements  
+- **Family user journey**: Memorial discovery → guestbook interaction
+- **Funeral home workflow**: CSV upload → bulk creation → family handoff
+- **Payment flows**: All subscription tiers and upgrade/downgrade scenarios
+- **Mobile responsiveness**: Memorial access on phones (primary use case)
+
+## Quality Standards
+- **93%+ test pass rate**: Current standard must be maintained
+- **Memorial data integrity**: Never lose memorial content or images
+- **Performance requirements**: Memorial pages load under 2 seconds
+- **Cross-browser compatibility**: Works on all major browsers/devices
+
+## Critical Test Scenarios
+- **Funeral day access**: Memorial links must work when families need them most
+- **High traffic periods**: Platform stability during memorial sharing
+- **Data recovery**: Backup and restore procedures for memorial content
+- **Graceful degradation**: Core functionality works even when features fail
+
+Memorial platforms have zero tolerance for data loss or unavailability during emotional moments.

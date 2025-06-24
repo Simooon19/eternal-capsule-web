@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Lightbox from '@/components/ui/Lightbox';
 
 interface ImageGalleryProps {
   images: {
@@ -15,6 +16,7 @@ interface ImageGalleryProps {
 
 export default function ImageGallery({ images }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageAlt, setSelectedImageAlt] = useState<string>('');
 
   return (
     <div className="space-y-4">
@@ -23,7 +25,10 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
           <div
             key={image.id}
             className="relative aspect-square cursor-pointer group"
-            onClick={() => setSelectedImage(image.url)}
+            onClick={() => {
+              setSelectedImage(image.url);
+              setSelectedImageAlt(image.alt);
+            }}
           >
             <Image
               src={image.url}
@@ -37,42 +42,15 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
         ))}
       </div>
 
-      {/* Lightbox */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
-            onClick={() => setSelectedImage(null)}
-          >
-            <svg
-              className="h-8 w-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-          <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
-            <Image
-              src={selectedImage}
-              alt="Selected image"
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
-            />
-          </div>
-        </div>
-      )}
+      <Lightbox
+        isOpen={!!selectedImage}
+        imageSrc={selectedImage || ''}
+        imageAlt={selectedImageAlt}
+        onClose={() => {
+          setSelectedImage(null);
+          setSelectedImageAlt('');
+        }}
+      />
     </div>
   );
 } 

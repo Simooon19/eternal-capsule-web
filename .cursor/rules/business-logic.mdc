@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Business Logic Rules - Swedish Memorial Market
+
+## Subscription Enforcement (Critical)
+- **Personal Plan**: 3 memorials max, basic features only
+- **NFC Plan**: 10 memorials max, NFC features, unlimited photos
+- **Custom Plan**: Unlimited memorials, API access, contact-based pricing
+- Always validate limits at API level, not just UI level
+
+## Swedish Market Considerations
+- **Currency**: Display prices in SEK for Swedish users
+- **Language**: Maintain English development, Swedish translation on-demand only
+- **Regulations**: Follow Swedish funeral laws (Svenska kyrgan compliance)
+- **Cultural sensitivity**: Eco-friendly positioning, dignity-focused messaging
+
+## Funeral Home vs Family Workflows
+- **B2C (Families)**: Auto-approve individual memorials, simple UI
+- **B2B (Funeral Homes)**: Manual approval for bulk imports, admin dashboard
+- **NFC Integration**: Generate tags for both workflows but prioritize funeral home volume
+
+## Revenue Protection
+- Stripe webhook validation is mandatory for all subscription changes
+- Never allow plan downgrade to exceed memorial limits
+- Implement proper trial period handling (30 days confirmed)
+- Track usage metrics for business intelligence
+
+## Growth Targets Alignment
+- Support 30-100 users year 1, scale to 1,000-10,000 users
+- Optimize for one-person operation initially
+- Build systems that support team scaling
+- Prioritize features that drive Swedish market adoption

@@ -6,8 +6,9 @@ import { defineConfig } from 'sanity';
 import { deskTool } from 'sanity/desk';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './src/sanity/schemaTypes';
-import { structure } from './src/sanity/structure';
+import { structure, defaultDocumentNode } from './src/sanity/structure';
 import { apiVersion, dataset, projectId } from './src/sanity/env';
+import { nfcTool } from './src/sanity/plugins/nfcTool';
 
 export default defineConfig({
   name: 'default',
@@ -16,8 +17,12 @@ export default defineConfig({
   dataset,
   basePath: '/studio',
   plugins: [
-    deskTool({ structure }),
+    deskTool({ 
+      structure,
+      defaultDocumentNode,
+    }),
     visionTool({ defaultApiVersion: apiVersion }),
+    nfcTool(),
   ],
   schema: {
     types: schemaTypes,

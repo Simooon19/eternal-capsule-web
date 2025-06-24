@@ -3,26 +3,196 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #FEFEFE;
+  --foreground: #2F2F2A;
+  /* Enhanced color variables for memorial sensitivity */
+  --memorial-primary: #6B7C6B;
+  --memorial-accent: #DD6B20;
+  --memorial-calm: #0EA5E9;
+  --memorial-comfort: #A855F7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1C1917;
+    --foreground: #F5F5F4;
+    --memorial-primary: #B8C5B8;
+    --memorial-accent: #F6AD55;
+    --memorial-calm: #7DD3FC;
+    --memorial-comfort: #D8B4FE;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), 'Atkinson Hyperlegible', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.7;
+  /* Enhanced for memorial sensitivity */
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  line-height: 1.4;
+  margin-bottom: 0.75em;
+  /* Softer font weights for memorial content */
+  font-weight: 600;
+  color: var(--memorial-primary);
+}
+
+/* Enhanced memorial-specific typography */
+.memorial-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--memorial-primary);
+  font-weight: 400;
+}
+
+.memorial-description {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--memorial-primary);
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.guestbook-entry {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--memorial-primary);
+  padding: 1rem;
+  background: color-mix(in srgb, var(--memorial-calm) 5%, transparent);
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--memorial-comfort);
+}
+
+.memorial-dates {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--memorial-accent);
+}
+
+.memorial-text {
+  color: var(--memorial-primary);
+  transition: color 0.3s ease;
+}
+
+/* Enhanced focus states for accessibility and emotional sensitivity */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--memorial-calm);
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--memorial-calm) 20%, transparent);
+}
+
+/* Better contrast and emotional appropriateness */
+@media (prefers-color-scheme: dark) {
+  .memorial-text {
+    color: var(--memorial-primary);
+  }
+  
+  .guestbook-entry {
+    background: color-mix(in srgb, var(--memorial-comfort) 10%, transparent);
+    border-left-color: var(--memorial-calm);
+  }
+}
+
+/* Enhanced Quiet Mode - More comprehensive for grief-sensitive users */
+.quiet-mode * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.1s !important; /* Allow some gentle transitions */
+  scroll-behavior: auto !important;
+}
+
+.quiet-mode .animate-pulse {
+  animation: none !important;
+}
+
+.quiet-mode .animate-spin {
+  animation: none !important;
+}
+
+.quiet-mode [class*="hover:"] {
+  transition: color 0.1s ease, background-color 0.1s ease !important;
+}
+
+/* Memorial-specific gentle animations */
+.memorial-card-gentle {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.memorial-card-gentle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--memorial-primary) 15%, transparent);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-pulse {
+    animation: none !important;
+  }
+  
+  .animate-spin {
+    animation: none !important;
+  }
+  
+  .memorial-card-gentle {
+    transition: none !important;
+  }
+  
+  .memorial-card-gentle:hover {
+    transform: none !important;
+  }
+}
+
+/* Gentle loading states */
+.memorial-loading {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--memorial-calm) 8%, transparent), transparent);
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Enhanced typography for Swedish text */
+:lang(sv) {
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Improved memorial image styling */
+.memorial-image {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--memorial-primary) 20%, transparent);
+  transition: box-shadow 0.3s ease;
+}
+
+.memorial-image:hover {
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--memorial-primary) 25%, transparent);
+}
+
+/* Gentle spacing for memorial content */
+.memorial-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--memorial-calm) 3%, transparent);
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--memorial-primary) 15%, transparent);
 }

@@ -1,141 +1,155 @@
-'use client';
-
-import { useState, useMemo, useEffect } from 'react';
+import { Navigation } from '@/components/Navigation';
+import MemorialSearch from '@/components/memorial/MemorialSearch';
 import { client } from '@/lib/sanity';
-import Link from 'next/link';
-import { Memorial, SearchFilters } from '@/types/memorial';
-import { MemorialSearch } from '@/components/memorial/MemorialSearch';
+import type { Memorial } from '@/types/memorial';
 
-export default function ExploreMemorials() {
-  const [memorials, setMemorials] = useState<Memorial[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<SearchFilters>({
-    yearRange: 'all',
-    hasPhotos: false,
-    hasStories: false,
-  });
-
-  useEffect(() => {
-    const fetchMemorials = async () => {
-      try {
-        const query = `*[_type == "memorial" && status == "published"] {
-          _id,
-          title,
-          subtitle,
-          slug,
-          bornAt,
-          diedAt,
-          createdAt,
-          updatedAt,
-          status,
-          gallery,
-          storyBlocks
-        }`;
-        
-        const result = await client.fetch(query);
-        console.log('Fetched memorials:', result);
-        setMemorials(result);
-      } catch (err) {
-        console.error('Error fetching memorials:', err);
-        setError('Failed to load memorials. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMemorials();
-  }, []);
-
-  const filteredMemorials = useMemo(() => {
-    console.log('Filtering memorials:', {
-      totalMemorials: memorials.length,
-      searchQuery,
-      filters
-    });
+// Fetch all memorials for exploration
+async function getAllMemorials(): Promise<Memorial[]> {
+  try {
+    const query = `*[_type == "memorial"] | order(_createdAt desc) {
+      _id,
+      name,
+      born,
+      died,
+      description,
+      "imageUrl": image.asset->url,
+      tags,
+      slug,
+      personalInfo {
+        dateOfBirth,
+        dateOfDeath,
+        restingPlace {
+          coordinates
+        }
+      },
+      _createdAt
+    }`;
     
-    return memorials.filter((memorial: Memorial) => {
-      const matchesSearch = memorial.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (memorial.subtitle && memorial.subtitle.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      console.log('Memorial search match:', {
-        title: memorial.title,
-        matchesSearch,
-        searchQuery
-      });
-      
-      const matchesYearRange = filters.yearRange === 'all' ||
-        (filters.yearRange === 'recent' && new Date(memorial.createdAt).getFullYear() >= new Date().getFullYear() - 1) ||
-        (filters.yearRange === 'old' && new Date(memorial.createdAt).getFullYear() < new Date().getFullYear() - 1);
-
-      const matchesPhotos = !filters.hasPhotos || (memorial.gallery && memorial.gallery.length > 0);
-      const matchesStories = !filters.hasStories || (memorial.storyBlocks && memorial.storyBlocks.length > 0);
-
-      return matchesSearch && matchesYearRange && matchesPhotos && matchesStories;
-    });
-  }, [memorials, searchQuery, filters]);
-
-  const handleSearch = (query: string, newFilters: SearchFilters) => {
-    setSearchQuery(query);
-    setFilters(newFilters);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-300">Loading memorials...</p>
-        </div>
-      </div>
-    );
+    const memorials = await client.fetch(query);
+    
+    // Transform data to handle both old and new schema
+    return memorials.map((memorial: any) => ({
+      ...memorial,
+      born: memorial.born || memorial.personalInfo?.dateOfBirth,
+      died: memorial.died || memorial.personalInfo?.dateOfDeath,
+      location: memorial.personalInfo?.restingPlace?.coordinates
+    }));
+  } catch (error) {
+    console.error('Error fetching memorials:', error);
+    return [];
   }
+}
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
-        </div>
-      </div>
-    );
-  }
+export const metadata = {
+  title: 'Utforska Minneslundar - Minneslund',
+  description: 'Upptäck och utforska digitala minneslundar i vår gemenskap. Sök, filtrera och hedra de liv som firats på vår plattform.',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
+export default async function ExplorePage() {
+  const memorials = await getAllMemorials();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Explore Memorials</h1>
-      
-      <MemorialSearch onSearch={handleSearch} />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {filteredMemorials.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-600 dark:text-gray-300">
-              {searchQuery ? 'No memorials found matching your search.' : 'No memorials available yet.'}
-            </p>
+    <div>
+      <Navigation />
+      <main className="pt-16">
+        {/* Hero Section */}
+        <section className="relative bg-granite-50 py-16">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img 
+              src="/images/explore-background.jpg" 
+              alt="Memorial garden background" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30" />
           </div>
-        ) : (
-          filteredMemorials.map((memorial: Memorial) => (
-            <Link 
-              key={memorial._id} 
-              href={`/memorial/${memorial.slug.current}`}
-              className="block bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
-            >
-              <div className="p-6">
-                <h2 className="text-2xl font-bold mb-2">{memorial.title}</h2>
-                {memorial.subtitle && (
-                  <p className="text-gray-600 dark:text-gray-300 mb-2">{memorial.subtitle}</p>
-                )}
-                {memorial.bornAt && memorial.diedAt && (
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {memorial.bornAt.location} - {memorial.diedAt.location}
-                  </p>
-                )}
+          
+          {/* Content */}
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                Utforska Minneslundar
+              </h1>
+              <p className="text-xl text-white/90 max-w-3xl mx-auto">
+                Upptäck och hedra de liv som firats i vår gemenskap. Varje minneslund berättar en unik historia om kärlek, förlust och hågkomst.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Search and Filter Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {memorials.length > 0 ? (
+              <MemorialSearch memorials={memorials} />
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-semibold text-granite-900 mb-4">
+                  Inga Minneslundar Ännu
+                </h2>
+                <p className="text-granite-600 mb-8 max-w-md mx-auto">
+                  Bli den första att skapa en vacker minneslund och hedra någon speciell i ditt liv.
+                </p>
+                <a
+                  href="/memorial/create"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-copper-600 hover:bg-copper-700"
+                >
+                  Skapa Första Minneslunden
+                </a>
               </div>
-            </Link>
-          ))
+            )}
+          </div>
+        </section>
+
+        {/* Statistics Section */}
+        {memorials.length > 0 && (
+          <section className="py-16 bg-granite-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-granite-900 mb-8">
+                  Vår Gemenskaps Påverkan
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-copper-600 mb-2">
+                      {memorials.length}
+                    </div>
+                    <div className="text-granite-700">
+                      {memorials.length === 1 ? 'Minneslund' : 'Minneslundar'} Skapade
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-copper-600 mb-2">
+                      {memorials.filter(m => m.tags && m.tags.length > 0).length}
+                    </div>
+                    <div className="text-granite-700">
+                      Berättelser Delade
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-copper-600 mb-2">
+                      ∞
+                    </div>
+                    <div className="text-granite-700">
+                      Minnen Bevarade
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         )}
-      </div>
+      </main>
     </div>
   );
 } 

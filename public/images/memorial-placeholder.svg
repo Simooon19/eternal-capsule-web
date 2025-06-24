@@ -1,0 +1,59 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Soft gradient background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F6F7F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8E9E8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9CA3AF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#6B7280;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)" />
+  
+  <!-- Decorative border -->
+  <rect x="40" y="40" width="720" height="520" rx="8" ry="8" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-dasharray="8,4" opacity="0.5" />
+  
+  <!-- Central icon container -->
+  <g transform="translate(400, 300)">
+    <!-- Outer circle -->
+    <circle cx="0" cy="0" r="80" fill="white" opacity="0.9" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="url(#iconGradient)" stroke-width="2" opacity="0.3" />
+    
+    <!-- Memorial flower icon -->
+    <g transform="scale(2.5)">
+      <!-- Stem -->
+      <path d="M 0 10 L 0 -5" stroke="#9CA3AF" stroke-width="1.5" fill="none" />
+      
+      <!-- Petals -->
+      <circle cx="0" cy="-8" r="3" fill="#9CA3AF" opacity="0.8" />
+      <circle cx="-3" cy="-6" r="3" fill="#9CA3AF" opacity="0.8" />
+      <circle cx="3" cy="-6" r="3" fill="#9CA3AF" opacity="0.8" />
+      <circle cx="-2" cy="-10" r="3" fill="#9CA3AF" opacity="0.8" />
+      <circle cx="2" cy="-10" r="3" fill="#9CA3AF" opacity="0.8" />
+      
+      <!-- Center -->
+      <circle cx="0" cy="-8" r="2" fill="#6B7280" />
+      
+      <!-- Leaves -->
+      <ellipse cx="-4" cy="5" rx="3" ry="1.5" fill="#9CA3AF" opacity="0.6" transform="rotate(-30 -4 5)" />
+      <ellipse cx="4" cy="5" rx="3" ry="1.5" fill="#9CA3AF" opacity="0.6" transform="rotate(30 4 5)" />
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="400" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="300" fill="#6B7280" text-anchor="middle" opacity="0.8">
+    Memorial Photo
+  </text>
+  
+  <!-- Corner accents -->
+  <g opacity="0.3">
+    <path d="M 60 60 L 80 60 L 60 80 Z" fill="url(#iconGradient)" />
+    <path d="M 740 60 L 740 80 L 720 60 Z" fill="url(#iconGradient)" />
+    <path d="M 60 540 L 60 520 L 80 540 Z" fill="url(#iconGradient)" />
+    <path d="M 740 540 L 720 540 L 740 520 Z" fill="url(#iconGradient)" />
+  </g>
+</svg> 

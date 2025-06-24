@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Minneslund pre-commit validation
+echo "🔍 Running pre-commit validation..."
+
+# Run TypeScript check
+echo "📝 Checking TypeScript..."
+npm run type-check || exit 1
+
+# Run ESLint
+echo "🔍 Running ESLint..."
+npm run lint || exit 1
+
+# Run tests (skip E2E for speed)
+echo "🧪 Running unit tests..."
+npm run test || exit 1
+
+echo "✅ Pre-commit validation passed!"

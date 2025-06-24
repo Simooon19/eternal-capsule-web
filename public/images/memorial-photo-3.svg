@@ -1,0 +1,48 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="copperGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF9F7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFEFE9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD8C7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="candleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFA87C;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#CC7A3E;stop-opacity:0.6" />
+    </linearGradient>
+    <linearGradient id="flameGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#CC7A3E;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#FFA87C;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:0.5" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Warm background -->
+  <rect width="400" height="300" fill="url(#copperGradient)"/>
+  
+  <!-- Gentle border -->
+  <rect x="15" y="15" width="370" height="270" fill="none" stroke="#CC7A3E" stroke-width="1" rx="8" ry="8" opacity="0.4"/>
+  
+  <!-- Memorial candle -->
+  <g transform="translate(200,160)" opacity="0.7">
+    <!-- Candle base -->
+    <rect x="-8" y="10" width="16" height="30" fill="url(#candleGradient)" rx="2"/>
+    <!-- Flame -->
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="url(#flameGradient)"/>
+    <!-- Wick -->
+    <line x1="0" y1="8" x2="0" y2="12" stroke="#8C542B" stroke-width="1"/>
+  </g>
+  
+  <!-- Warm decorative elements -->
+  <g opacity="0.3">
+    <!-- Corner warmth indicators -->
+    <circle cx="40" cy="40" r="3" fill="#FFA87C"/>
+    <circle cx="360" cy="40" r="3" fill="#FFA87C"/>
+    <circle cx="40" cy="260" r="3" fill="#FFA87C"/>
+    <circle cx="360" cy="260" r="3" fill="#FFA87C"/>
+  </g>
+  
+  <!-- Comforting text -->
+  <text x="200" y="230" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#8C542B" opacity="0.8" font-style="italic">
+    Evigt ljus
+  </text>
+</svg> 

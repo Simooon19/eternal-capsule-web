@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Error Handling & Communication - Memorial Platform
+
+## Sensitive Error Handling
+- **User-facing errors**: Use compassionate, clear language
+- **Technical errors**: Log detailed info but show simple messages to users
+- **Memorial upload failures**: Provide helpful guidance, not frustrating tech-speak
+- **Payment issues**: Handle gracefully without disrupting memorial access
+
+## Communication Tone Guidelines
+- **Professional but warm**: Remember users are often grieving
+- **Clear and actionable**: Avoid technical jargon in user interfaces
+- **Respectful**: Never use casual language for memorial-related content
+- **Supportive**: Provide helpful next steps for any issues
+
+## Error Recovery Patterns
+- **Draft saving**: Always save memorial progress (family time is precious)
+- **Retry mechanisms**: For uploads and payments (don't lose memorial content)
+- **Graceful degradation**: Platform should work even if some features fail
+- **Backup strategies**: Multiple ways to access memorials (NFC + QR + URL)
+
+## Monitoring & Alerting
+- **Critical alerts**: Memorial deletion, payment failures, bulk import errors
+- **Performance monitoring**: Memorial load times (families expect immediate access)
+- **Usage tracking**: Monitor for abuse or inappropriate content
+- **Health checks**: Ensure memorial links always work (they may be shared at funerals)
+
+## Documentation Standards
+- Write error messages as if explaining to a grieving family member
+- Document all error scenarios and recovery steps
+- Maintain empathetic README and help documentation
+- Provide clear contact methods for urgent issues
+
+The platform deals with irreplaceable memories - every error has emotional weight.

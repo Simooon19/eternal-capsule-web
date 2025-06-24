@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Security & Privacy Rules for Memorial Platform
+
+## Data Protection Requirements
+- **Living relatives' data**: Apply Swedish GDPR compliance (full protection)
+- **Deceased persons' data**: No GDPR protection, but handle ethically and securely
+- **Memorial content**: Treat as sensitive data requiring respectful handling
+- **NFC UIDs**: Generate cryptographically secure, unique identifiers
+
+## Input Validation Mandatory
+- Always use Zod schemas for API route validation
+- Validate image uploads (size, type, content safety)
+- Sanitize memorial content for XSS prevention
+- Rate limit all public endpoints (especially memorial creation)
+
+## Authentication & Authorization
+- Use NextAuth.js patterns consistently
+- Implement role-based access (admin, user, funeral home)
+- Validate subscription limits before allowing actions
+- Session management with secure cookies only
+
+## Sensitive Content Handling
+- Never log memorial content or personal details
+- Implement proper error messages (no data leakage)
+- Use secure image upload practices
+- Handle family notification emails with privacy care
+
+Memorial platforms require extra sensitivity - always consider the emotional impact of any changes or errors.

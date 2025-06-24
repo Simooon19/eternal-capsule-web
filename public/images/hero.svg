@@ -1,0 +1,41 @@
+<!-- Memorial Website Hero Background -->
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7F7F7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E3E3E3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C9C9C9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="overlay" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CC7A3E;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#663D1E;stop-opacity:0.2" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="600" fill="url(#heroGradient)"/>
+  
+  <!-- Soft overlay -->
+  <rect width="1200" height="600" fill="url(#overlay)"/>
+  
+  <!-- Peaceful tree silhouettes -->
+  <path d="M0 600 Q200 500 400 550 Q600 500 800 540 Q1000 520 1200 560 L1200 600 Z" fill="#7A8471" opacity="0.3"/>
+  
+  <!-- Gentle hills -->
+  <path d="M0 450 Q300 400 600 420 Q900 440 1200 410 L1200 600 L0 600 Z" fill="#9E9E9E" opacity="0.2"/>
+  
+  <!-- Memorial elements - subtle dove -->
+  <g transform="translate(600,200)" opacity="0.4">
+    <path d="M-20 0 Q-15 -10 0 -5 Q15 -10 20 0 Q15 5 0 3 Q-15 5 -20 0" fill="white"/>
+  </g>
+  
+  <!-- Peaceful light rays -->
+  <g opacity="0.3">
+    <path d="M100 0 L120 0 L110 100 L90 100 Z" fill="url(#overlay)"/>
+    <path d="M300 0 L320 0 L310 80 L290 80 Z" fill="url(#overlay)"/>
+    <path d="M500 0 L520 0 L510 120 L490 120 Z" fill="url(#overlay)"/>
+  </g>
+  
+  <!-- Text overlay space -->
+  <rect x="50" y="200" width="500" height="200" fill="black" opacity="0.1" rx="10"/>
+</svg> 

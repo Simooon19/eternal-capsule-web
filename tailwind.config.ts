@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import graniteCopperPlugin from "./tailwind/graniteCopperPlugin";
 
 const config: Config = {
   content: [
@@ -8,46 +9,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        granite: {
-          900: '#2D2D2D',
-          100: '#E6E6E6',
-        },
-        copper: {
-          500: '#CC7A3E',
-        },
-      },
+      // Custom color palette defined via graniteCopperPlugin.
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Playfair Display', 'serif'],
       },
-      typography: {
-        DEFAULT: {
-          css: {
-            h1: {
-              fontFamily: 'Playfair Display',
-              fontWeight: '700',
-              fontSize: '48px',
-              lineHeight: '56px',
-            },
-            body: {
-              fontFamily: 'Inter',
-              fontWeight: '400',
-              fontSize: '18px',
-              lineHeight: '28px',
-            },
-            caption: {
-              fontFamily: 'Inter',
-              fontWeight: '300',
-              fontSize: '14px',
-              lineHeight: '20px',
-            },
-          },
-        },
-      },
     },
   },
-  plugins: [],
+  plugins: [graniteCopperPlugin],
 };
 
 export default config;

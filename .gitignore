@@ -39,3 +39,50 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/generated/prisma
+
+# Testing and reports
+/test-results/
+/playwright-report/
+/coverage/
+.nyc_output
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+/prisma/dev.db*
+
+# Logs and cache
+*.log
+logs/
+.cache/
+.eslintcache
+
+# Development
+dev.log
+*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PWA
+/public/sw.js
+/public/workbox-*.js
+
+# Sanity
+.sanity/
+
+# Sentry
+.sentryclirc
+
+# Lighthouse
+lighthouse-report.html
+lhci_reports/
+
+# Bundle analysis
+.next/analyze/

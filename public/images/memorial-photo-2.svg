@@ -1,0 +1,43 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="serenityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F0F9FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E0F2FE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BAE6FD;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flowerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#0284C7;stop-opacity:0.4" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Calming background -->
+  <rect width="400" height="300" fill="url(#serenityGradient)"/>
+  
+  <!-- Soft border -->
+  <rect x="15" y="15" width="370" height="270" fill="none" stroke="#0284C7" stroke-width="1" rx="8" ry="8" opacity="0.3"/>
+  
+  <!-- Simple flower memorial symbol -->
+  <g transform="translate(200,140)" opacity="0.5">
+    <!-- Flower petals -->
+    <circle cx="0" cy="-12" r="8" fill="url(#flowerGradient)"/>
+    <circle cx="12" cy="0" r="8" fill="url(#flowerGradient)"/>
+    <circle cx="0" cy="12" r="8" fill="url(#flowerGradient)"/>
+    <circle cx="-12" cy="0" r="8" fill="url(#flowerGradient)"/>
+    <!-- Center -->
+    <circle cx="0" cy="0" r="6" fill="#075985" opacity="0.7"/>
+  </g>
+  
+  <!-- Gentle decorative elements -->
+  <g opacity="0.2">
+    <path d="M50 50 Q60 40 70 50" fill="none" stroke="#0284C7" stroke-width="1"/>
+    <path d="M330 50 Q340 40 350 50" fill="none" stroke="#0284C7" stroke-width="1"/>
+    <path d="M50 250 Q60 260 70 250" fill="none" stroke="#0284C7" stroke-width="1"/>
+    <path d="M330 250 Q340 260 350 250" fill="none" stroke="#0284C7" stroke-width="1"/>
+  </g>
+  
+  <!-- Peaceful text -->
+  <text x="200" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#075985" opacity="0.8" font-style="italic">
+    Vila i frid
+  </text>
+</svg> 

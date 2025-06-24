@@ -1,0 +1,111 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 🎯 Eternal Capsule - AI Assistant Rules
+
+## Core Project Context
+
+### Smart Documentation Reading
+- **Read CLAUDE.md** when working on architecture, business logic, integrations, or major features
+- **Skip CLAUDE.md** for minor fixes, simple debugging, or general programming questions  
+- **Update CLAUDE.md** only when making lasting changes to architecture, business strategy, or core workflows
+- **Follow the rules in** `.cursor/rules/claude-context.md` for detailed guidance
+
+### Project Analysis Priority
+1. **Always analyze all files** every time before making modifications to understand the whole project
+2. **Verify against documentation** - Check IMPLEMENTATION_ROADMAP.md and update completed phases
+3. **Test thoroughly** - Use Playwright and terminal testing for proper functioning
+4. **Solve all errors** - Don't leave broken functionality 
+5. **Verify no hallucinations** - Ensure implementations match actual codebase capabilities
+
+## Code Standards
+
+### Next.js 14 + TypeScript Best Practices
+- Use App Router patterns (`app/` directory)
+- Implement proper TypeScript types for all functions
+- Follow the established component patterns in `/components/ui/`
+- Use server components by default, client components only when needed
+
+### API Development
+- Follow RESTful conventions established in `/api/` routes
+- Implement proper error handling with consistent response formats
+- Use Zod schemas for input validation
+- Maintain the existing rate limiting and security patterns
+
+### Database & CMS
+- **Sanity CMS**: Primary content storage for memorials and media
+- **PostgreSQL + Prisma**: Metadata and user management
+- Follow established schema patterns
+- Use GROQ queries for Sanity data fetching
+
+### Testing Requirements
+- **Unit Tests**: Jest + React Testing Library (maintain 70%+ coverage)
+- **E2E Tests**: Playwright for critical user journeys
+- **API Tests**: Test all endpoints with proper error scenarios
+- **Performance**: Lighthouse CI + Core Web Vitals monitoring
+
+## Business Logic Constraints
+
+### Subscription Management
+- Enforce plan limits at API level (Personal: 3 memorials, NFC: 10, Custom: unlimited)
+- Validate Stripe webhook signatures for security
+- Handle plan upgrades/downgrades gracefully
+
+### Memorial Workflows  
+- Individual memorials: Auto-approve
+- Bulk imports: Manual admin approval required
+- NFC integration: Generate unique UIDs for each memorial
+- Image optimization: Use Next.js Image component with Sanity CDN
+
+### Security & Privacy
+- Implement rate limiting on all public endpoints
+- Validate all user inputs with Zod schemas
+- Follow Swedish GDPR compliance (living relatives' data only)
+- Use NextAuth.js session management patterns
+
+## Deployment & Infrastructure
+
+### Production Readiness
+- **Hosting**: Vercel (confirmed preference)
+- **Database**: Current Sanity + PostgreSQL hybrid validated
+- **Monitoring**: Use existing health checks and Sentry integration
+- **Environment**: Follow the documented environment variables pattern
+
+### Performance Optimization
+- Keep react-leaflet@4.2.1 (React 18 compatibility)
+- Implement proper image optimization and lazy loading
+- Use dynamic imports for heavy components
+- Maintain existing caching strategies
+
+## Communication Style
+
+### With Project Owner
+- **Direct and actionable**: Provide specific recommendations with reasoning
+- **Business-focused**: Connect technical decisions to business outcomes  
+- **Swedish market aware**: Consider local regulations and cultural preferences
+- **Growth-oriented**: Support the 30-100 → 1,000-10,000 user scaling plan
+
+### Documentation Updates
+- Update CLAUDE.md for architectural changes and business strategy shifts
+- Maintain IMPLEMENTATION_ROADMAP.md phase tracking
+- Create clear commit messages explaining the business impact
+- Document any new patterns or conventions established
+
+## Error Prevention
+
+### Common Gotchas to Avoid
+- Don't upgrade react-leaflet beyond 4.2.1 
+- Check for hydration issues with client-side components
+- Verify Framer Motion animations work with SSR
+- Maintain PostCSS CommonJS format for Next.js compatibility
+- Test mobile navigation selectors in Playwright
+
+### Before Major Changes
+1. Run existing test suite to ensure no regressions
+2. Check that changes align with confirmed business strategy  
+3. Verify impact on subscription plan limits and billing
+4. Consider effect on both B2B (funeral homes) and B2C (families) workflows
+
+This approach ensures AI assistance is contextual, efficient, and aligned with your business goals while maintaining high code quality and platform reliability. 
