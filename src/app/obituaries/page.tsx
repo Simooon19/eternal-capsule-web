@@ -3,6 +3,7 @@ import MemorialCard from '@/components/MemorialCard';
 import { client } from '@/lib/sanity';
 import type { Memorial } from '@/types/memorial';
 import Link from 'next/link';
+import LocationBasedObituaries from '@/components/memorial/LocationBasedObituaries';
 
 // Fetch recent obituaries (memorials from the last year)
 async function getRecentObituaries(): Promise<Memorial[]> {
@@ -12,31 +13,74 @@ async function getRecentObituaries(): Promise<Memorial[]> {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const cutoffDate = thirtyDaysAgo.toISOString();
 
-    const query = `*[_type == "memorial" && (
-      died >= "${cutoffDate}" || 
-      personalInfo.dateOfDeath >= "${cutoffDate}" ||
-      _createdAt >= "${cutoffDate}"
-    )] | order(coalesce(died, personalInfo.dateOfDeath, _createdAt) desc) {
+    const query = `*[
+      _type == "memorial" && 
+      status == "published" && 
+      !(_id in path("drafts.**")) &&
+      defined(title) && 
+      defined(personalInfo.dateOfBirth) && 
+      defined(personalInfo.dateOfDeath) &&
+      !(title match "test*") &&
+      !(title match "*test*") &&
+      !(title match "fjärt*") &&
+      !(title match "*fjärt*") &&
+      defined(heroImage) &&
+      (
+        personalInfo.dateOfDeath >= "${cutoffDate}" ||
+        _createdAt >= "${cutoffDate}"
+      )
+    ] | order(slug.current asc) | order(coalesce(personalInfo.dateOfDeath, _createdAt) desc) {
       _id,
       title,
-      name,
       subtitle,
-      born,
-      died,
-      description,
-      bornAt,
-      diedAt,
-      "imageUrl": image.asset->url,
+      "heroImage": heroImage{
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height
+            }
+          }
+        },
+        alt,
+        caption
+      },
+      "gallery": gallery[]{
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height
+            }
+          }
+        },
+        alt,
+        caption
+      },
       tags,
       slug,
       personalInfo {
         dateOfBirth,
         dateOfDeath,
-        birthLocation,
-        deathLocation,
-        restingPlace {
+        birthLocation {
+          location,
           coordinates,
-          cemetery
+          geocodingInfo
+        },
+        deathLocation {
+          location,
+          coordinates,
+          geocodingInfo
+        },
+        restingPlace {
+          cemetery,
+          location,
+          section,
+          coordinates
         }
       },
       _createdAt
@@ -44,13 +88,44 @@ async function getRecentObituaries(): Promise<Memorial[]> {
     
     const memorials = await client.fetch(query);
     
-    // Transform data to handle both old and new schema
+    // Transform data to match MemorialCard expectations with improved robustness
     return memorials.map((memorial: any) => ({
       ...memorial,
-      born: memorial.born || memorial.personalInfo?.dateOfBirth,
-      died: memorial.died || memorial.personalInfo?.dateOfDeath,
-      location: memorial.personalInfo?.restingPlace?.coordinates
-    }));
+      // Map name fields for MemorialCard compatibility
+      name: memorial.title || '', // MemorialCard checks title || name
+      
+      // Map image fields for MemorialCard compatibility with fallback handling
+      coverImage: memorial.heroImage && memorial.heroImage.asset?.url ? {
+        url: memorial.heroImage.asset.url,
+        alt: memorial.heroImage.alt || `Memorial photo of ${memorial.title}`,
+        caption: memorial.heroImage.caption,
+        width: memorial.heroImage.asset?.metadata?.dimensions?.width || 800,
+        height: memorial.heroImage.asset?.metadata?.dimensions?.height || 600
+      } : null,
+      
+      // Map date fields for MemorialCard compatibility
+      born: memorial.personalInfo?.dateOfBirth,
+      died: memorial.personalInfo?.dateOfDeath,
+      
+      // Map location fields for MemorialCard compatibility with improved handling
+      bornAt: memorial.personalInfo?.birthLocation?.location ? {
+        location: memorial.personalInfo.birthLocation.location,
+        coordinates: memorial.personalInfo.birthLocation.coordinates
+      } : null,
+      diedAt: memorial.personalInfo?.deathLocation?.location ? {
+        location: memorial.personalInfo.deathLocation.location,
+        coordinates: memorial.personalInfo.deathLocation.coordinates
+      } : null,
+      
+      // Keep original personalInfo for other components that might need it
+      personalInfo: memorial.personalInfo
+    })).filter((memorial: any) => 
+      // Additional safety filter to ensure valid memorials
+      memorial.title && 
+      memorial.personalInfo?.dateOfBirth && 
+      memorial.personalInfo?.dateOfDeath &&
+      memorial._id
+    );
   } catch (error) {
     console.error('Error fetching obituaries:', error);
     return [];
@@ -71,14 +146,6 @@ export default async function ObituariesPage() {
   const obituaries = await getRecentObituaries();
   const today = new Date();
 
-  // Helper function to format age
-  const calculateAge = (born: string, died: string) => {
-    if (!born || !died) return null;
-    const birthDate = new Date(born);
-    const deathDate = new Date(died);
-    return Math.floor((deathDate.getTime() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  };
-
   // Helper function to format newspaper date
   const formatNewspaperDate = (date: Date) => {
     return date.toLocaleDateString('sv-SE', { 
@@ -88,21 +155,6 @@ export default async function ObituariesPage() {
       day: 'numeric' 
     });
   };
-
-  // Group obituaries by date for newspaper feel
-  const todayObituaries = obituaries.filter(obit => {
-    const deathDate = new Date(obit.died || obit.personalInfo?.dateOfDeath || obit._createdAt);
-    const diffTime = today.getTime() - deathDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7; // Last 7 days
-  });
-
-  const olderObituaries = obituaries.filter(obit => {
-    const deathDate = new Date(obit.died || obit.personalInfo?.dateOfDeath || obit._createdAt);
-    const diffTime = today.getTime() - deathDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 7;
-  });
 
   return (
     <div>
@@ -129,119 +181,9 @@ export default async function ObituariesPage() {
           </div>
         </section>
 
-        {/* Today's Obituaries Section */}
-        {todayObituaries.length > 0 && (
-          <section className="py-12 bg-granite-25">
-            <div className="max-w-4xl mx-auto px-4">
-              <h2 className="text-2xl font-serif font-bold text-granite-900 mb-8 text-center border-b border-granite-300 pb-2">
-                Senaste Dödsannonserna
-              </h2>
-              
-              <div className="space-y-8">
-                                 {todayObituaries.map((obituary) => {
-                   const birthDate = obituary.born || obituary.personalInfo?.dateOfBirth;
-                   const deathDate = obituary.died || obituary.personalInfo?.dateOfDeath;
-                   const age = (birthDate && deathDate) ? calculateAge(birthDate, deathDate) : null;
-                   const location = obituary.diedAt?.location || obituary.personalInfo?.deathLocation || '';
-                   
-                   return (
-                     <article key={obituary._id} className="bg-white p-6 rounded-lg shadow-sm border border-granite-200">
-                       <div className="flex flex-col md:flex-row gap-6">
-                         {/* Photo */}
-                         <div className="flex-shrink-0">
-                           <div className="w-24 h-32 md:w-32 md:h-40 bg-granite-100 rounded border overflow-hidden">
-                             {obituary.coverImage || obituary.gallery?.[0] ? (
-                               <img
-                                 src="/images/placeholder-memorial.svg"
-                                 alt={`${obituary.title || obituary.name}`}
-                                 className="w-full h-full object-cover"
-                               />
-                             ) : (
-                               <img
-                                 src="/images/placeholder-memorial.svg"
-                                 alt={`Memorial placeholder for ${obituary.title || obituary.name}`}
-                                 className="w-full h-full object-cover opacity-60"
-                               />
-                             )}
-                           </div>
-                         </div>
-                        
-                        {/* Obituary Content */}
-                        <div className="flex-1">
-                          <header className="mb-4">
-                            <h3 className="text-xl md:text-2xl font-serif font-bold text-granite-900 mb-1">
-                              {obituary.title || obituary.name}
-                            </h3>
-                            
-                            <div className="text-granite-700 font-medium">
-                              {age && <span>Ålder {age}</span>}
-                              {location && (
-                                <>
-                                  {age && <span> • </span>}
-                                  <span>från {location}</span>
-                                </>
-                              )}
-                            </div>
-                            
-                            {deathDate && (
-                              <div className="text-sm text-granite-600 mt-1">
-                                Avled {new Date(deathDate).toLocaleDateString('sv-SE', {
-                                  month: 'long',
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
-                              </div>
-                            )}
-                          </header>
-                          
-                          {/* Obituary Text */}
-                          {obituary.subtitle && (
-                            <p className="text-granite-700 leading-relaxed mb-4 font-serif">
-                              {obituary.subtitle}
-                            </p>
-                          )}
-                          
-                          {/* View Memorial Link */}
-                          <div className="flex items-center justify-between">
-                            <Link
-                              href={`/memorial/${obituary.slug.current}`}
-                              className="text-copper-600 hover:text-copper-700 font-medium text-sm border-b border-copper-300 hover:border-copper-500 transition-colors"
-                            >
-                              Se Hela Minneslunden →
-                            </Link>
-                            
-                            {/* Family Services Info */}
-                            <div className="text-xs text-granite-500">
-                              Minneslunds-ID: {obituary._id.slice(-6).toUpperCase()}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Previous Obituaries Section */}
-        {olderObituaries.length > 0 && (
-          <section className="py-12">
-            <div className="max-w-4xl mx-auto px-4">
-              <h2 className="text-2xl font-serif font-bold text-granite-900 mb-8 text-center border-b border-granite-300 pb-2">
-                Tidigare Dödsannonser
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {olderObituaries.map((obituary) => (
-                  <div key={obituary._id} className="bg-white border border-granite-200 rounded-lg overflow-hidden shadow-sm">
-                    <MemorialCard memorial={obituary} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+        {/* Recent Obituaries - Location-based sorting with 4x6 Grid Layout */}
+        {obituaries.length > 0 && (
+          <LocationBasedObituaries obituaries={obituaries} />
         )}
 
         {/* No Obituaries State */}

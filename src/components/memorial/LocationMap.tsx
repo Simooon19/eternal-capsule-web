@@ -20,6 +20,13 @@ interface LocationMapProps {
       lng: number
     }
   }
+  restingPlace?: {
+    location: string
+    coordinates?: {
+      lat: number
+      lng: number
+    }
+  }
 }
 
 // Simple client-side geocoder (OpenStreetMap Nominatim)
@@ -37,11 +44,12 @@ async function geocode(text: string): Promise<{ lat: number; lng: number } | nul
   return null;
 }
 
-const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
+const LocationMap = ({ bornAt, diedAt, restingPlace }: LocationMapProps) => {
   const [isClient, setIsClient] = useState(false)
   const [MapComponent, setMapComponent] = useState<React.ComponentType<any> | null>(null)
   const [resolvedBorn, setResolvedBorn] = useState<typeof bornAt | null>(bornAt)
   const [resolvedDied, setResolvedDied] = useState<typeof diedAt | null>(diedAt)
+  const [resolvedResting, setResolvedResting] = useState<typeof restingPlace | null>(restingPlace || null)
 
   useEffect(() => {
     setIsClient(true)
@@ -53,22 +61,22 @@ const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
         const { MapContainer, TileLayer, Marker, Popup } = await import('react-leaflet')
         
         // Create the map component using React-Leaflet 4.2.1
-        const Map = ({ bornAt, diedAt }: { bornAt: any, diedAt: any }) => {
+        const Map = ({ bornAt, diedAt, restingPlace }: { bornAt: any, diedAt: any, restingPlace?: any }) => {
           let center: [number, number] = [0, 0]
           let zoom = 2
           
-          if (bornAt.coordinates && diedAt.coordinates) {
-            center = [
-              (bornAt.coordinates.lat + diedAt.coordinates.lat) / 2,
-              (bornAt.coordinates.lng + diedAt.coordinates.lng) / 2,
-            ]
-            zoom = 4
-          } else if (bornAt.coordinates) {
-            center = [bornAt.coordinates.lat, bornAt.coordinates.lng]
-            zoom = 6
-          } else if (diedAt.coordinates) {
-            center = [diedAt.coordinates.lat, diedAt.coordinates.lng]
-            zoom = 6
+          // Calculate center from all available coordinates
+          const coordinates = [
+            bornAt.coordinates,
+            diedAt.coordinates,
+            restingPlace?.coordinates
+          ].filter(Boolean);
+          
+          if (coordinates.length > 0) {
+            const avgLat = coordinates.reduce((sum, coord) => sum + coord.lat, 0) / coordinates.length;
+            const avgLng = coordinates.reduce((sum, coord) => sum + coord.lng, 0) / coordinates.length;
+            center = [avgLat, avgLng];
+            zoom = coordinates.length === 1 ? 8 : coordinates.length === 2 ? 6 : 5;
           }
 
           return (
@@ -87,7 +95,7 @@ const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
                   <Marker position={[bornAt.coordinates.lat, bornAt.coordinates.lng]}>
                     <Popup>
                       <div className="text-sm">
-                        <p className="font-semibold">Born</p>
+                        <p className="font-semibold">Född</p>
                         <p>{bornAt.location}</p>
                       </div>
                     </Popup>
@@ -97,8 +105,18 @@ const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
                   <Marker position={[diedAt.coordinates.lat, diedAt.coordinates.lng]}>
                     <Popup>
                       <div className="text-sm">
-                        <p className="font-semibold">Died</p>
+                        <p className="font-semibold">Avled</p>
                         <p>{diedAt.location}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
+                {restingPlace?.coordinates && (
+                  <Marker position={[restingPlace.coordinates.lat, restingPlace.coordinates.lng]}>
+                    <Popup>
+                      <div className="text-sm">
+                        <p className="font-semibold">Vila</p>
+                        <p>{restingPlace.location}</p>
                       </div>
                     </Popup>
                   </Marker>
@@ -108,7 +126,9 @@ const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
           )
         }
 
-        setMapComponent(() => Map)
+        const WrappedMap = (props: any) => <Map {...props} restingPlace={resolvedResting} />
+        WrappedMap.displayName = 'WrappedMap'
+        setMapComponent(() => WrappedMap)
       } catch (error) {
         // Failed to load map components
       }
@@ -126,23 +146,27 @@ const LocationMap = ({ bornAt, diedAt }: LocationMapProps) => {
         const res = await geocode(diedAt.location)
         if (res) setResolvedDied({ ...diedAt, coordinates: res })
       }
+      if (restingPlace && (!restingPlace.coordinates || isNaN(restingPlace.coordinates.lat)) && restingPlace.location) {
+        const res = await geocode(restingPlace.location)
+        if (res) setResolvedResting({ ...restingPlace, coordinates: res })
+      }
     }
 
     geocodeLocations()
-  }, [bornAt, diedAt])
+  }, [bornAt, diedAt, restingPlace, resolvedResting])
 
   if (!isClient || !MapComponent) {
     return <div className="h-[400px] w-full bg-gray-100 rounded-lg animate-pulse" />
   }
 
   // Only render map when at least one set of coordinates is available
-  if (!resolvedBorn?.coordinates && !resolvedDied?.coordinates) {
+  if (!resolvedBorn?.coordinates && !resolvedDied?.coordinates && !resolvedResting?.coordinates) {
     return <div className="h-[400px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
       <p className="text-gray-500 text-sm">Location data unavailable.</p>
     </div>
   }
 
-  return <MapComponent bornAt={resolvedBorn!} diedAt={resolvedDied!} />
+  return <MapComponent bornAt={resolvedBorn!} diedAt={resolvedDied!} restingPlace={resolvedResting} />
 }
 
 export { LocationMap } 

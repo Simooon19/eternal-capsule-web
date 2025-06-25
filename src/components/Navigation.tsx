@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -12,6 +14,10 @@ export function Navigation() {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   return (
@@ -50,18 +56,44 @@ export function Navigation() {
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <Link
-              href="/auth/signin"
-              className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
-            >
-              Logga in
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="bg-copper-600 hover:bg-copper-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Registrera
-            </Link>
+            {status === 'loading' ? (
+              <div className="animate-pulse">
+                <div className="h-8 w-20 bg-granite-700 rounded"></div>
+              </div>
+            ) : session ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-granite-200 text-sm">
+                  Hej, {session.user?.name || session.user?.email}
+                </span>
+                <Link
+                  href="/dashboard"
+                  className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
+                >
+                  Logga ut
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/auth/signin"
+                  className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
+                >
+                  Logga in
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-copper-600 hover:bg-copper-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Registrera
+                </Link>
+              </>
+            )}
           </div>
           
           {/* Mobile menu button */}
@@ -105,20 +137,50 @@ export function Navigation() {
                 Priser
               </Link>
               <div className="border-t border-granite-700 pt-3 mt-3">
-                <Link
-                  href="/auth/signin"
-                  className="text-granite-200 hover:text-white hover:bg-granite-700 block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={closeMobileMenu}
-                >
-                  Logga in
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="bg-copper-600 hover:bg-copper-700 text-white block px-3 py-2 rounded-md text-base font-medium mt-2"
-                  onClick={closeMobileMenu}
-                >
-                  Registrera
-                </Link>
+                {status === 'loading' ? (
+                  <div className="animate-pulse px-3 py-2">
+                    <div className="h-6 w-32 bg-granite-700 rounded"></div>
+                  </div>
+                ) : session ? (
+                  <>
+                    <div className="text-granite-200 px-3 py-2 text-sm">
+                      Hej, {session.user?.name || session.user?.email}
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      className="text-granite-200 hover:text-white hover:bg-granite-700 block px-3 py-2 rounded-md text-base font-medium"
+                      onClick={closeMobileMenu}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        closeMobileMenu();
+                        handleSignOut();
+                      }}
+                      className="text-granite-200 hover:text-white hover:bg-granite-700 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
+                    >
+                      Logga ut
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/auth/signin"
+                      className="text-granite-200 hover:text-white hover:bg-granite-700 block px-3 py-2 rounded-md text-base font-medium"
+                      onClick={closeMobileMenu}
+                    >
+                      Logga in
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      className="bg-copper-600 hover:bg-copper-700 text-white block px-3 py-2 rounded-md text-base font-medium mt-2"
+                      onClick={closeMobileMenu}
+                    >
+                      Registrera
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

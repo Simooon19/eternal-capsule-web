@@ -65,7 +65,7 @@ export default function MemorialSearch({ memorials }: MemorialSearchProps) {
   return (
     <div className="space-y-6">
       {/* Search and Filter Controls */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+      <div className="bg-pearl-50 dark:bg-granite-800 p-6 rounded-lg shadow-sm border border-pearl-200 dark:border-granite-700">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-1">
@@ -84,7 +84,7 @@ export default function MemorialSearch({ memorials }: MemorialSearchProps) {
                 placeholder="Sök minneslundar efter namn, beskrivning..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-copper-500 focus:border-copper-500"
+                className="block w-full pl-10 pr-3 py-2 border border-pearl-300 dark:border-granite-600 rounded-md leading-5 bg-pearl-50 dark:bg-granite-700 text-granite-900 dark:text-pearl-100 placeholder-granite-500 focus:outline-none focus:placeholder-granite-400 focus:ring-1 focus:ring-serenity-500 focus:border-serenity-500"
               />
               {searchTerm && (
                 <button
@@ -108,7 +108,7 @@ export default function MemorialSearch({ memorials }: MemorialSearchProps) {
               id="filter"
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-copper-500 focus:border-copper-500"
+              className="block w-full px-3 py-2 border border-pearl-300 dark:border-granite-600 rounded-md bg-pearl-50 dark:bg-granite-700 text-granite-900 dark:text-pearl-100 focus:outline-none focus:ring-1 focus:ring-serenity-500 focus:border-serenity-500"
             >
               <option value="all">Alla Minneslundar</option>
               <option value="recent">Senaste (30 dagar)</option>
@@ -153,7 +153,7 @@ export default function MemorialSearch({ memorials }: MemorialSearchProps) {
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-copper-600 bg-copper-100 hover:bg-copper-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-copper-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-serenity-600 bg-serenity-100 hover:bg-serenity-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-serenity-500"
             >
               Rensa Sökning
             </button>

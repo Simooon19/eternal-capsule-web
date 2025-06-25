@@ -13,19 +13,35 @@ interface MemorialPageProps {
 
 async function getMemorial(slug: string): Promise<Memorial | null> {
   try {
-    const query = `*[_type == "memorial" && slug.current == $slug][0] {
+    const query = `*[
+      _type == "memorial" && 
+      slug.current == $slug &&
+      !(_id in path("drafts.**")) &&
+      defined(title) &&
+      !(title match "test*") &&
+      !(title match "*test*") &&
+      !(title match "fjärt*") &&
+      !(title match "*fjärt*")
+    ][0] {
       _id,
       title,
-      name,
+      preferredName,
       subtitle,
-      description,
       slug,
-      born,
-      died,
-      bornAt,
-      diedAt,
-      personalInfo,
-      coverImage,
+      "heroImage": heroImage{
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height
+            }
+          }
+        },
+        alt,
+        caption
+      },
       gallery[] {
         _key,
         asset-> {
@@ -41,7 +57,28 @@ async function getMemorial(slug: string): Promise<Memorial | null> {
         alt,
         caption
       },
-      storyBlocks,
+      biography,
+      personalInfo {
+        dateOfBirth,
+        dateOfDeath,
+        age,
+        birthLocation {
+          location,
+          coordinates,
+          geocodingInfo
+        },
+        deathLocation {
+          location,
+          coordinates,
+          geocodingInfo
+        },
+        restingPlace {
+          cemetery,
+          location,
+          section,
+          coordinates
+        }
+      },
       timeline[] {
         _key,
         date,
@@ -100,7 +137,56 @@ async function getMemorial(slug: string): Promise<Memorial | null> {
     }`;
     
     const memorial = await client.fetch(query, { slug });
-    return memorial;
+    
+    if (!memorial) return null;
+    
+    // Transform data to match component expectations with improved robustness
+    const transformedMemorial = {
+      ...memorial,
+      // Map name fields for backward compatibility
+      name: memorial.title || '',
+      
+      // Map image fields with proper fallback handling
+      coverImage: memorial.heroImage && memorial.heroImage.asset?.url ? {
+        url: memorial.heroImage.asset.url,
+        alt: memorial.heroImage.alt || `Memorial photo of ${memorial.title}`,
+        caption: memorial.heroImage.caption,
+        width: memorial.heroImage.asset?.metadata?.dimensions?.width || 800,
+        height: memorial.heroImage.asset?.metadata?.dimensions?.height || 600
+      } : null,
+      
+      // Map gallery images with improved handling
+      gallery: memorial.gallery?.map((item: any, index: number) => ({
+        _key: item._key || `gallery-${index}`,
+        url: item.asset?.url || '',
+        alt: item.alt || `Gallery photo ${index + 1}`,
+        caption: item.caption,
+        width: item.asset?.metadata?.dimensions?.width || 800,
+        height: item.asset?.metadata?.dimensions?.height || 600
+      })).filter((item: any) => item.url) || [],
+      
+      // Map date fields for component compatibility
+      born: memorial.personalInfo?.dateOfBirth,
+      died: memorial.personalInfo?.dateOfDeath,
+      
+      // Map location fields for component compatibility with improved handling
+      bornAt: memorial.personalInfo?.birthLocation?.location ? {
+        location: memorial.personalInfo.birthLocation.location,
+        coordinates: memorial.personalInfo.birthLocation.coordinates
+      } : null,
+      diedAt: memorial.personalInfo?.deathLocation?.location ? {
+        location: memorial.personalInfo.deathLocation.location,
+        coordinates: memorial.personalInfo.deathLocation.coordinates
+      } : null,
+      
+      // Map story content - biography becomes storyBlocks for component compatibility
+      storyBlocks: memorial.biography || [],
+      
+      // Keep original personalInfo for new components that use it properly
+      personalInfo: memorial.personalInfo
+    };
+    
+    return transformedMemorial;
   } catch (error) {
     console.error('Error fetching memorial:', error);
     return null;

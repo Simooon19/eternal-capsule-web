@@ -7,18 +7,22 @@ interface MemorialStatsProps {
 }
 
 export default function MemorialStats({ memorial }: MemorialStatsProps) {
-  let yearsLived: number | string = 'N/A';
-  if (memorial.born && memorial.died) {
-    const diff = new Date(memorial.died).getTime() - new Date(memorial.born).getTime();
-    if (!isNaN(diff) && diff > 0) {
-      yearsLived = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+  // Calculate years lived since memorial creation instead of actual lifespan
+  let yearsSinceCreation: number | string = 'N/A';
+  const creationDate = memorial._createdAt || memorial.createdAt;
+  if (creationDate) {
+    const diffYears = new Date().getTime() - new Date(creationDate).getTime();
+    if (!isNaN(diffYears) && diffYears >= 0) {
+      yearsSinceCreation = Math.floor(diffYears / (1000 * 60 * 60 * 24 * 365.25));
     }
   }
 
   const photoCount = memorial.gallery?.length || 0
-  const storyWordsCount = memorial.storyBlocks?.reduce((count, block) => {
+  
+  // Use storyBlocks for word count
+  const storyWordsCount = memorial.storyBlocks?.reduce((count: number, block: any) => {
     if (block._type === 'block' && block.children) {
-      return count + block.children.reduce((wordCount, child) => {
+      return count + block.children.reduce((wordCount: number, child: any) => {
         return wordCount + (child.text?.split(' ').length || 0)
       }, 0)
     }
@@ -26,8 +30,8 @@ export default function MemorialStats({ memorial }: MemorialStatsProps) {
   }, 0) || 0
   
   let memorialAge: number | string = 'N/A';
-  if (memorial.createdAt) {
-    const diffAge = new Date().getTime() - new Date(memorial.createdAt).getTime();
+  if (creationDate) {
+    const diffAge = new Date().getTime() - new Date(creationDate).getTime();
     if (!isNaN(diffAge) && diffAge >= 0) {
       memorialAge = Math.floor(diffAge / (1000 * 60 * 60 * 24));
     }
@@ -35,8 +39,8 @@ export default function MemorialStats({ memorial }: MemorialStatsProps) {
 
   const stats = [
     {
-      label: 'År Levde',
-      value: yearsLived,
+      label: 'År levde sedan skapande',
+      value: yearsSinceCreation,
       icon: '🕰️',
       description: 'Ett vällevt liv'
     },

@@ -6,19 +6,69 @@ import type { Memorial } from '@/types/memorial';
 // Fetch all memorials for exploration
 async function getAllMemorials(): Promise<Memorial[]> {
   try {
-    const query = `*[_type == "memorial"] | order(_createdAt desc) {
+    const query = `*[
+      _type == "memorial" && 
+      status == "published" && 
+      !(_id in path("drafts.**")) &&
+      defined(title) && 
+      defined(personalInfo.dateOfBirth) && 
+      defined(personalInfo.dateOfDeath) &&
+      !(title match "test*") &&
+      !(title match "*test*") &&
+      !(title match "fjärt*") &&
+      !(title match "*fjärt*") &&
+      defined(heroImage)
+    ] | order(slug.current asc) | order(_createdAt desc) {
       _id,
-      name,
-      born,
-      died,
-      description,
-      "imageUrl": image.asset->url,
+      title,
+      subtitle,
+      "heroImage": heroImage{
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height
+            }
+          }
+        },
+        alt,
+        caption
+      },
+      "gallery": gallery[]{
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height
+            }
+          }
+        },
+        alt,
+        caption
+      },
       tags,
       slug,
       personalInfo {
         dateOfBirth,
         dateOfDeath,
+        birthLocation {
+          location,
+          coordinates,
+          geocodingInfo
+        },
+        deathLocation {
+          location,
+          coordinates,
+          geocodingInfo
+        },
         restingPlace {
+          cemetery,
+          location,
+          section,
           coordinates
         }
       },
@@ -27,13 +77,44 @@ async function getAllMemorials(): Promise<Memorial[]> {
     
     const memorials = await client.fetch(query);
     
-    // Transform data to handle both old and new schema
+    // Transform data to match MemorialCard expectations with improved robustness
     return memorials.map((memorial: any) => ({
       ...memorial,
-      born: memorial.born || memorial.personalInfo?.dateOfBirth,
-      died: memorial.died || memorial.personalInfo?.dateOfDeath,
-      location: memorial.personalInfo?.restingPlace?.coordinates
-    }));
+      // Map name fields for MemorialCard compatibility
+      name: memorial.title || '', // MemorialCard checks title || name
+      
+      // Map image fields for MemorialCard compatibility with fallback handling
+      coverImage: memorial.heroImage && memorial.heroImage.asset?.url ? {
+        url: memorial.heroImage.asset.url,
+        alt: memorial.heroImage.alt || `Memorial photo of ${memorial.title}`,
+        caption: memorial.heroImage.caption,
+        width: memorial.heroImage.asset?.metadata?.dimensions?.width || 800,
+        height: memorial.heroImage.asset?.metadata?.dimensions?.height || 600
+      } : null,
+      
+      // Map date fields for MemorialCard compatibility
+      born: memorial.personalInfo?.dateOfBirth,
+      died: memorial.personalInfo?.dateOfDeath,
+      
+      // Map location fields for MemorialCard compatibility with improved handling
+      bornAt: memorial.personalInfo?.birthLocation?.location ? {
+        location: memorial.personalInfo.birthLocation.location,
+        coordinates: memorial.personalInfo.birthLocation.coordinates
+      } : null,
+      diedAt: memorial.personalInfo?.deathLocation?.location ? {
+        location: memorial.personalInfo.deathLocation.location,
+        coordinates: memorial.personalInfo.deathLocation.coordinates
+      } : null,
+      
+      // Keep original personalInfo for other components that might need it
+      personalInfo: memorial.personalInfo
+    })).filter((memorial: any) => 
+      // Additional safety filter to ensure valid memorials
+      memorial.title && 
+      memorial.personalInfo?.dateOfBirth && 
+      memorial.personalInfo?.dateOfDeath &&
+      memorial._id
+    );
   } catch (error) {
     console.error('Error fetching memorials:', error);
     return [];
