@@ -1,6 +1,7 @@
 import HeroSection from '@/components/HeroSection';
 import { Navigation } from '@/components/Navigation';
 import MemorialCard from '@/components/MemorialCard';
+import { MemorialCardSkeleton } from '@/components/ui/SkeletonLoader';
 import Link from 'next/link';
 import { client } from '@/lib/sanity';
 import type { Memorial } from '@/types/memorial';
@@ -163,8 +164,10 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-granite-600">
-                <p>Inga minneslundar ännu. Bli den första att skapa en.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <MemorialCardSkeleton />
+                <MemorialCardSkeleton />
+                <MemorialCardSkeleton />
               </div>
             )}
             

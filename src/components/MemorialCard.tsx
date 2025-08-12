@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { urlForImage } from '@/lib/sanity';
 import { Memorial } from '@/types/memorial';
 
@@ -44,23 +45,32 @@ export default function MemorialCard({ memorial }: MemorialCardProps) {
   const deathDate = memorial.died || memorial.personalInfo?.dateOfDeath;
 
   return (
-    <Link href={`/memorial/${memorial.slug.current}`}>
+    <Link 
+      href={`/memorial/${memorial.slug.current}`}
+      className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2 rounded-xl"
+    >
       <div className="memorial-card-gentle group cursor-pointer bg-pearl-50 dark:bg-granite-800 rounded-xl shadow-sm hover:shadow-lg overflow-hidden border border-pearl-200 dark:border-granite-700 hover:border-sage-300 dark:hover:border-sage-600 transition-all duration-300">
         {/* Image Container */}
         <div className="relative overflow-hidden bg-pearl-100 dark:bg-granite-700 aspect-[4/3]">
           {mainImage ? (
-            <img
+            <Image
               src={urlForImage(mainImage).url()}
               alt={`Minnesbild av ${displayName}`}
+              fill
+              sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
               className="memorial-image w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+              priority={false}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              {/* Use improved memorial placeholder */}
-              <img
+              {/* Placeholder image */}
+              <Image
                 src="/images/memorial-photo-1.svg"
                 alt={`Standardbild för ${displayName}`}
+                fill
+                sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
                 className="w-full h-full object-cover opacity-90"
+                priority={false}
               />
             </div>
           )}

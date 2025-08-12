@@ -69,7 +69,7 @@ export default function HeroSection({
                 {primaryCta && (
                   <Link
                     href={primaryCta.href}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-copper-500 hover:bg-copper-600"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-copper-500 hover:bg-copper-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2"
                   >
                     {primaryCta.text}
                   </Link>
@@ -77,7 +77,7 @@ export default function HeroSection({
                 {secondaryCta && (
                   <Link
                     href={secondaryCta.href}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-copper-500 text-base font-medium rounded-md text-white hover:bg-copper-500/10"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-copper-500 text-base font-medium rounded-md text-white hover:bg-copper-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2"
                   >
                     {secondaryCta.text}
                   </Link>
@@ -96,7 +96,7 @@ export default function HeroSection({
                 {primaryCta && (
                   <Link
                     href={primaryCta.href}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-copper-500 hover:bg-copper-600"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-copper-500 hover:bg-copper-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2"
                   >
                     {primaryCta.text}
                   </Link>
@@ -104,7 +104,7 @@ export default function HeroSection({
                 {secondaryCta && (
                   <Link
                     href={secondaryCta.href}
-                    className="inline-flex items-center justify-center px-6 py-3 border border-copper-500 text-base font-medium rounded-md text-white hover:bg-copper-500/10"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-copper-500 text-base font-medium rounded-md text-white hover:bg-copper-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2"
                   >
                     {secondaryCta.text}
                   </Link>
