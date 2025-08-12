@@ -23,6 +23,7 @@ describe('MemorialCard Component', () => {
     _id: 'test-memorial-1',
     name: 'John Doe',
     title: 'John Doe Memorial',
+    subtitle: 'A loving father and devoted husband who touched many lives through his kindness.',
     description: 'A loving father and devoted husband who touched many lives through his kindness.',
     born: '1950-05-15',
     died: '2023-12-01',
@@ -61,7 +62,7 @@ describe('MemorialCard Component', () => {
     _createdAt: '2023-12-01T00:00:00Z',
     tags: ['father', 'husband', 'teacher'],
     viewCount: 150,
-    nfcTagUid: 'nfc_1234567890_abc123',
+    minnesbrickaTagUid: 'minnesbricka_1234567890_abc123',
     privacy: 'public'
   };
 
@@ -90,15 +91,15 @@ describe('MemorialCard Component', () => {
     // Test memorial name/title
     expect(screen.getByText('John Doe Memorial')).toBeInTheDocument();
     
-    // Test description
+    // Test subtitle (which is displayed on the card)
     expect(screen.getByText(/A loving father and devoted husband/)).toBeInTheDocument();
     
-    // Test dates
-    expect(screen.getByText(/1950/)).toBeInTheDocument();
-    expect(screen.getByText(/2023/)).toBeInTheDocument();
+    // Test dates (check for full date text to be more specific)
+    expect(screen.getByText(/15 maj 1950/)).toBeInTheDocument();
+    expect(screen.getByText(/1 december 2023/)).toBeInTheDocument();
     
     // Test image
-    const image = screen.getByAltText('John Doe portrait');
+    const image = screen.getByAltText('Minnesbild av John Doe Memorial');
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'https://example.com/john-doe.jpg');
     
@@ -202,7 +203,7 @@ describe('MemorialCard Component', () => {
     expect(link).toBeInTheDocument();
     
     // Image should have alt text
-    const image = screen.getByAltText('John Doe portrait');
+    const image = screen.getByAltText('Minnesbild av John Doe Memorial');
     expect(image).toBeInTheDocument();
     
     // Should be keyboard navigable
@@ -241,7 +242,7 @@ describe('MemorialCard Component', () => {
   test('maintains proper aspect ratio for images', () => {
     render(<MemorialCard memorial={mockMemorial} />);
     
-    const image = screen.getByAltText('John Doe portrait');
+    const image = screen.getByAltText('Minnesbild av John Doe Memorial');
     
     // Check that image has appropriate classes or styles
     expect(image).toHaveClass(/object-cover|aspect-ratio|w-|h-/);

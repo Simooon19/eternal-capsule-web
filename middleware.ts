@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // Security configuration
 const SECURITY_HEADERS = {
@@ -111,7 +112,23 @@ function validateRequest(request: NextRequest): { isValid: boolean; reason?: str
   return { isValid: true };
 }
 
-export function middleware(request: NextRequest) {
+// Protected routes that require authentication
+const PROTECTED_ROUTES = [
+  '/dashboard',
+  '/account',
+  '/memorial/create',
+  '/memorial/edit',
+  '/api/user',
+  '/api/memorials/bulk'
+];
+
+// Auth routes that should redirect if already authenticated
+const AUTH_ROUTES = [
+  '/auth/signin',
+  '/auth/signup'
+];
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const clientIP = getClientIP(request);
   
@@ -124,6 +141,30 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/studio')
   ) {
     return NextResponse.next();
+  }
+
+  // Check authentication for protected routes
+  const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
+  const isAuthRoute = AUTH_ROUTES.some(route => pathname.startsWith(route));
+  
+  if (isProtectedRoute || isAuthRoute) {
+    const token = await getToken({ 
+      req: request, 
+      secret: process.env.NEXTAUTH_SECRET 
+    });
+
+    // Redirect unauthenticated users from protected routes
+    if (isProtectedRoute && !token) {
+      const signInUrl = new URL('/auth/signin', request.url);
+      signInUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    // Redirect authenticated users from auth routes to dashboard
+    if (isAuthRoute && token) {
+      const dashboardUrl = new URL('/dashboard', request.url);
+      return NextResponse.redirect(dashboardUrl);
+    }
   }
   
   // No internationalization routing needed

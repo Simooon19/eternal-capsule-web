@@ -28,6 +28,12 @@ export async function GET(request: NextRequest) {
       planName: subscriptionData.planName,
       isTrialActive: trialStatus.isActive,
       trialDaysRemaining: trialStatus.daysRemaining,
+      // Business rules transparency
+      limits: {
+        personal: 3,
+        minnesbricka: 10,
+        custom: 'unlimited',
+      },
     });
 
   } catch (error) {

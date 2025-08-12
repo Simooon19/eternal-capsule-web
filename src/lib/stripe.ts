@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 
 // Initialize Stripe
+// Use the SDK's latest typed API version to satisfy TypeScript
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_for_build', {
   apiVersion: '2025-05-28.basil',
 });
@@ -25,25 +26,25 @@ export const subscriptionPlans = {
     ],
     stripePriceId: null,
   },
-  nfc: {
-    id: 'nfc',
-    name: 'NFC',
-    price: 2900, // $29.00 in cents
+  minnesbricka: {
+    id: 'minnesbricka',
+    name: 'Minnesbricka',
+    price: 2900, // 29 SEK in öre
     interval: 'month' as const,
     maxMemorials: 10,
-    description: 'Enhanced experience with NFC technology for physical memorial connections',
+    description: 'Förbättrad upplevelse med Minnesbricka-teknik för fysiska minneslundsanslutningar',
     features: [
-      'Up to 10 memorial profiles',
-      'Unlimited photos and videos',
-      'Physical NFC memorial tags included',
-      'Advanced guestbook with moderation',
-      'Custom memorial URLs',
-      'Location mapping and directions',
-      'Priority email support',
-      'Annual memorial reports',
-      'Mobile app access',
+      'Upp till 10 minneslundar',
+      'Obegränsade foton och videor',
+      'Fysiska Minnesbrickor inkluderade',
+      'Avancerad gästbok med moderation',
+      'Anpassade minneslunds-URLer',
+      'Platskartläggning och vägbeskrivningar',
+      'Prioriterad e-postsupport',
+      'Årliga minneslundsrapporter',
+      'Mobilappåtkomst',
     ],
-    stripePriceId: process.env.STRIPE_NFC_PRICE_ID || 'price_nfc_29_monthly_test',
+    stripePriceId: process.env.STRIPE_MINNESBRICKA_PRICE_ID || 'price_minnesbricka_29_monthly_test',
   },
   custom: {
     id: 'custom',
@@ -338,7 +339,7 @@ export function getPlanLimits(planId: PlanId): {
 }
 
 export function canUpgrade(currentPlan: PlanId, targetPlan: PlanId): boolean {
-  const plans = ['personal', 'nfc', 'custom'] as const;
+  const plans = ['personal', 'minnesbricka', 'custom'] as const;
   const currentIndex = plans.indexOf(currentPlan as any);
   const targetIndex = plans.indexOf(targetPlan as any);
   

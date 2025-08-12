@@ -125,13 +125,13 @@ export default function NFCIntegration({ memorial, onScanDetected }: NFCIntegrat
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-semibold mb-4">NFC & QR Code</h3>
+      <h3 className="text-lg font-semibold mb-4">Minnesbricka & QR Code</h3>
       
-      {/* NFC Tag UID Display */}
-      {memorial.nfcTagUid && (
+      {/* Minnesbricka Tag UID Display */}
+      {memorial.minnesbrickaTagUid && (
         <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
           <div className="text-sm text-gray-600 dark:text-gray-300">
-            NFC Tag ID: <code className="font-mono">{memorial.nfcTagUid}</code>
+            Minnesbricka ID: <code className="font-mono">{memorial.minnesbrickaTagUid}</code>
           </div>
         </div>
       )}

@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { createCheckoutSession, createStripeCustomer, subscriptionPlans } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { withRateLimit, rateLimiters } from '@/lib/rateLimit';
+
+const bodySchema = z.object({
+  planId: z.enum(['personal', 'minnesbricka', 'custom']),
+  successUrl: z.string().url().optional(),
+  cancelUrl: z.string().url().optional(),
+});
 
 export async function POST(request: NextRequest) {
   return withRateLimit(request, rateLimiters.general, async () => {
@@ -17,7 +24,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const { planId, successUrl, cancelUrl } = await request.json();
+      const raw = await request.json();
+      const parsed = bodySchema.safeParse(raw);
+      if (!parsed.success) {
+        return NextResponse.json({ error: 'Invalid payload', details: parsed.error.flatten() }, { status: 400 });
+      }
+      const { planId, successUrl, cancelUrl } = parsed.data;
 
       if (!planId || !subscriptionPlans[planId as keyof typeof subscriptionPlans]) {
         return NextResponse.json(
@@ -26,11 +38,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (planId === 'free') {
-        return NextResponse.json(
-          { error: 'Free plan does not require checkout' },
-          { status: 400 }
-        );
+      // Personal plan has no checkout
+      if (planId === 'personal') {
+        return NextResponse.json({ message: 'Personal plan selected. No checkout required.' });
       }
 
       // Get user from database

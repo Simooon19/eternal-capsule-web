@@ -71,6 +71,12 @@ export function Navigation() {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  href="/account"
+                  className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
+                >
+                  Konto
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="text-granite-200 hover:text-white px-3 py-2 text-sm font-medium"
@@ -152,6 +158,13 @@ export function Navigation() {
                       onClick={closeMobileMenu}
                     >
                       Dashboard
+                    </Link>
+                    <Link
+                      href="/account"
+                      className="text-granite-200 hover:text-white hover:bg-granite-700 block px-3 py-2 rounded-md text-base font-medium"
+                      onClick={closeMobileMenu}
+                    >
+                      Konto
                     </Link>
                     <button
                       onClick={() => {

@@ -37,7 +37,7 @@ const config = {
       enabled: process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === 'true',
       provider: process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER || 'none',
     },
-    nfc: {
+    minnesbricka: {
       enabled: process.env.NEXT_PUBLIC_NFC_ENABLED === 'true',
     },
     maps: {

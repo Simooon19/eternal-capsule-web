@@ -21,19 +21,19 @@ export default function PricingPage() {
       stripePriceId: null,
     },
     {
-      id: 'nfc' as PlanId,
-      name: 'NFC',
-      price: 32000, // 320 SEK in öre (320 * 100)
+      id: 'minnesbricka' as PlanId,
+      name: 'Minnesbricka',
+      price: 2900, // 29 SEK in öre (29 * 100)
       interval: 'month',
       maxMemorials: 10,
-      description: 'Förbättrade minneslundar med NFC-teknik för åtkomst vid graven',
+      description: 'Förbättrade minneslundar med Minnesbricka-teknik för åtkomst vid graven',
       features: [
         'Upp till 10 minneslundsprofiler',
         'Obegränsade foton och videor',
-        'Fysiska NFC-taggar inkluderade',
+        'Fysiska Minnesbrickor inkluderade',
         'Prioriterad support'
       ] as const,
-      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_NFC_PRICE_ID || null,
+      stripePriceId: process.env.NEXT_PUBLIC_STRIPE_MINNESBRICKA_PRICE_ID || null,
     },
     {
       id: 'custom' as PlanId,
@@ -76,7 +76,7 @@ export default function PricingPage() {
                 <PricingCard 
                   key={plan.id} 
                   plan={plan} 
-                  isPopular={plan.id === 'nfc'}
+                  isPopular={plan.id === 'minnesbricka'}
                   locale="sv"
                   delay={index * 100}
                 />

@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { client } from '@/lib/sanity';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { withRateLimit, rateLimiters } from '@/lib/rateLimit';
 
 export async function GET(request: NextRequest) {
   return withRateLimit(request, rateLimiters.general, async () => {
     try {
-      // TODO: Add authentication check when Prisma is properly configured
-      // For now, allowing access for testing purposes
+      // Require admin session
+      const session = await getServerSession(authOptions);
+      if (!session?.user?.role || session.user.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
 
       const { searchParams } = new URL(request.url);
       const timeRange = searchParams.get('range') || '30d';

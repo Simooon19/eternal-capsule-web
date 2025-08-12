@@ -9,7 +9,8 @@
   },
   "env": {
     "NEXT_PUBLIC_SITE_URL": "https://eternal-capsule-web.vercel.app",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_STRIPE_MINNESBRICKA_PRICE_ID": "price_xxxxxxxxxxxxxxxxxx"
   },
   "build": {
     "env": {

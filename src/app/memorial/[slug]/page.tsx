@@ -225,7 +225,12 @@ export default async function MemorialPage({ params }: MemorialPageProps) {
 
   // Check privacy settings
   if (memorial.privacy === 'password-protected') {
-    // TODO: Implement password protection component
+    return (
+      <div className="max-w-xl mx-auto py-20 text-center">
+        <h2 className="text-2xl font-semibold mb-4">Denna minnessida är lösenordsskyddad</h2>
+        <p className="text-granite-600">Vänligen kontakta familjen eller administratören för åtkomst.</p>
+      </div>
+    )
   }
 
   return (

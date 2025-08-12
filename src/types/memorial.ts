@@ -128,7 +128,7 @@ export interface Memorial {
   tags?: string[];
   coordinates?: Coordinates;
   blackAndWhiteHero?: boolean;
-  nfcTagUid?: string;
+  minnesbrickaTagUid?: string;
   viewCount?: number;
   scanCount?: number;
   privacy?: 'public' | 'link-only' | 'password-protected';

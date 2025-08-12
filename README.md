@@ -31,7 +31,7 @@ Minneslund är en banbrytande digital minneslundsplattform som överbryggar den 
 - ✅ **Beautiful Memorial Cards** with custom Swedish placeholder images
 - ✅ **Responsive Design** optimized for all devices
 - ✅ **Authentication System** (signin/signup with Google OAuth)
-- ✅ **Pricing Page** with SEK currency (320 kr/månad)
+- ✅ **Pricing Page** with SEK currency (290 kr/månad for Minnesbricka)
 - ✅ **API Endpoints** (25+ routes) for full functionality
 - ✅ **Progressive Web App** with offline support
 - ✅ **Performance Optimized** with Core Web Vitals monitoring
@@ -198,15 +198,11 @@ DATABASE_URL=your_prisma_database_url
 
 ### **Subscription Tiers**
 
-| Feature | Free | Family ($19/mo) | Funeral Home ($99/mo) | Enterprise ($249/mo) |
-|---------|------|---------------|-----------------------|---------------------|
-| Memorials | 3 | 15 | 100 | Unlimited |
-| Storage | 50 photos | Unlimited | Unlimited | Unlimited |
-| NFC Tags | ❌ | ✅ | ✅ | ✅ |
-| Custom Branding | ❌ | ❌ | ✅ | ✅ |
-| API Access | ❌ | ❌ | ✅ | ✅ |
-| Priority Support | ❌ | ✅ | ✅ | ✅ |
-| Analytics | Basic | Standard | Advanced | Enterprise |
+| Plan | Price | Memorials | NFC | Branding | API |
+|------|------:|-----------:|:---:|:-------:|:---:|
+| Personal | 0 kr/mån | 3 | ❌ | ❌ | ❌ |
+| Minnesbricka | 290 kr/mån | 10 | ✅ | ❌ | ❌ |
+| Custom | Kontakt | Obegränsat | ✅ | ✅ | ✅ |
 
 ### **Revenue Streams**
 1. **Subscription Revenue** - Monthly recurring billing

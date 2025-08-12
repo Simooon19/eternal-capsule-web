@@ -62,7 +62,7 @@ export const mockMemorials: Memorial[] = [
     updatedAt: '2023-11-15T10:00:00Z',
     _createdAt: '2023-11-15T10:00:00Z',
     _updatedAt: '2023-11-15T10:00:00Z',
-    nfcTagUid: 'nfc_anna_1942_memorial',
+    minnesbrickaTagUid: 'minnesbricka_anna_1942_memorial',
     viewCount: 127,
     privacy: 'public'
   },
@@ -122,7 +122,7 @@ export const mockMemorials: Memorial[] = [
     updatedAt: '2024-01-20T14:00:00Z',
     _createdAt: '2024-01-20T14:00:00Z',
     _updatedAt: '2024-01-20T14:00:00Z',
-    nfcTagUid: 'nfc_erik_1955_memorial',
+    minnesbrickaTagUid: 'minnesbricka_erik_1955_memorial',
     viewCount: 89,
     privacy: 'public'
   },
@@ -176,7 +176,7 @@ export const mockMemorials: Memorial[] = [
     updatedAt: '2023-10-01T09:00:00Z',
     _createdAt: '2023-10-01T09:00:00Z',
     _updatedAt: '2023-10-01T09:00:00Z',
-    nfcTagUid: 'nfc_margareta_1948_memorial',
+    minnesbrickaTagUid: 'minnesbricka_margareta_1948_memorial',
     viewCount: 156,
     privacy: 'public'
   }

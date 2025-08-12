@@ -98,58 +98,76 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async signIn({ user, account, profile }) {
-      // Start a trial for new users
+      // Start a trial for new OAuth users
       if (account?.type === "oauth" && user.email) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email }
-        })
-
-        if (!existingUser) {
-          // Get plan from URL if available (passed via state or other means)
-          const planId = 'family'; // Default to family for OAuth signups
-          
-          // Start 30-day trial for new users
-          const trialEndsAt = new Date()
-          trialEndsAt.setDate(trialEndsAt.getDate() + 30)
-
-          await prisma.trial.create({
-            data: {
-              userId: user.id,
-              planId,
-              endsAt: trialEndsAt,
-            }
+        try {
+          // Check if user already has a trial (regardless of when they signed up)
+          const existingTrial = await prisma.trial.findUnique({
+            where: { userId: user.id }
           })
 
-          await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              trialEndsAt: trialEndsAt,
-              planId,
-              subscriptionStatus: 'trialing',
-            }
-          })
+          if (!existingTrial) {
+            // Use database transaction to ensure consistency
+            await prisma.$transaction(async (tx) => {
+              const planId = 'minnesbricka'; // Default to minnesbricka for OAuth signups
+              
+              // Start 30-day trial for new users
+              const trialEndsAt = new Date()
+              trialEndsAt.setDate(trialEndsAt.getDate() + 30)
 
-          // Send welcome email for OAuth users
-          try {
-            const selectedPlan = subscriptionPlans[planId as keyof typeof subscriptionPlans];
-            const { sendEmail } = await import('./email');
-            
-            await sendEmail({
-              to: user.email,
-              subject: 'Welcome to Eternal Capsule',
-              template: 'welcome',
-              data: {
-                userName: user.name || 'New User',
-                planName: selectedPlan.name,
-                isTrialing: true,
-                trialEndsAt: trialEndsAt.toLocaleDateString(),
-                dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
-                loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/signin`,
-              },
-            });
-          } catch (emailError) {
-            console.error('Failed to send OAuth welcome email:', emailError);
+              // Use upsert to handle race conditions safely
+              await tx.trial.upsert({
+                where: { userId: user.id },
+                create: {
+                  userId: user.id,
+                  planId,
+                  endsAt: trialEndsAt,
+                },
+                update: {
+                  // If somehow a trial was created between our check and now, don't overwrite it
+                }
+              })
+
+              // Update user with trial information
+              await tx.user.update({
+                where: { id: user.id },
+                data: {
+                  trialEndsAt: trialEndsAt,
+                  planId,
+                  subscriptionStatus: 'trialing',
+                }
+              })
+            })
+
+            // Send welcome email for new OAuth trial users (outside transaction)
+            try {
+              const selectedPlan = subscriptionPlans['minnesbricka' as keyof typeof subscriptionPlans];
+              const { sendEmail } = await import('./email');
+              
+              const trialEndsAt = new Date()
+              trialEndsAt.setDate(trialEndsAt.getDate() + 30)
+              
+              await sendEmail({
+                to: user.email,
+                subject: 'Welcome to Eternal Capsule',
+                template: 'welcome',
+                data: {
+                  userName: user.name || 'New User',
+                  planName: selectedPlan.name,
+                  isTrialing: true,
+                  trialEndsAt: trialEndsAt.toLocaleDateString(),
+                  dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+                  loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/signin`,
+                },
+              });
+            } catch (emailError) {
+              console.error('Failed to send OAuth welcome email:', emailError);
+            }
           }
+        } catch (error) {
+          console.error('Error setting up OAuth user trial:', error);
+          // Don't fail the sign-in process if trial setup fails
+          // User can still sign in and we can set up trial later
         }
       }
 
@@ -177,7 +195,7 @@ export async function checkUserAccess(userId: string, feature: keyof typeof feat
 
   // Check if trial is still active
   const isTrialActive = user.trialEndsAt && new Date() < user.trialEndsAt
-  const currentPlan = isTrialActive ? 'family' : user.planId
+  const currentPlan = isTrialActive ? 'minnesbricka' : user.planId
 
   return featureAccess[feature].includes(currentPlan as any)
 }
@@ -197,7 +215,7 @@ export async function checkSubscriptionLimits(userId: string) {
 
   // Check if trial is still active
   const isTrialActive = user.trialEndsAt && new Date() < user.trialEndsAt
-  const currentPlan = isTrialActive ? 'family' : user.planId
+  const currentPlan = isTrialActive ? 'minnesbricka' : user.planId
   
   const plan = subscriptionPlans[currentPlan as keyof typeof subscriptionPlans]
   const currentCount = user.memorials.length
@@ -214,10 +232,10 @@ export async function checkSubscriptionLimits(userId: string) {
 
 // Feature access control
 const featureAccess = {
-  nfcTags: ['family', 'funeral', 'enterprise'],
-  customBranding: ['funeral', 'enterprise'],
-  apiAccess: ['funeral', 'enterprise'],
-  prioritySupport: ['family', 'funeral', 'enterprise'],
-  analytics: ['family', 'funeral', 'enterprise'],
-  whiteLabel: ['enterprise'],
+  minnesbrickaTags: ['minnesbricka', 'custom'],
+  customBranding: ['custom'],
+  apiAccess: ['custom'],
+  prioritySupport: ['minnesbricka', 'custom'],
+  analytics: ['minnesbricka', 'custom'],
+  whiteLabel: ['custom'],
 } as const 
