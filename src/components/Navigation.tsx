@@ -56,6 +56,13 @@ export function Navigation() {
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+            {/* Primary CTA: Create Memorial (desktop) */}
+            <Link
+              href="/memorial/create"
+              className="bg-copper-600 hover:bg-copper-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 focus-visible:ring-offset-2"
+            >
+              Skapa Minneslund
+            </Link>
             {status === 'loading' ? (
               <div className="animate-pulse">
                 <div className="h-8 w-20 bg-granite-700 rounded"></div>
