@@ -8,10 +8,56 @@ interface PendingEntry {
   type: 'guestbook' | 'analytics' | 'contact';
 }
 
-class OfflineSync {
+export class OfflineSync {
   private dbName = 'EternalCapsuleDB';
   private dbVersion = 1;
   private db: IDBDatabase | null = null;
+  private dbUnavailableWarningLogged = false;
+  private fallbackQueues: Record<PendingEntry['type'], PendingEntry[]> = {
+    guestbook: [],
+    analytics: [],
+    contact: [],
+  };
+
+  private getStoreName(type: PendingEntry['type']): string {
+    const storeMap = {
+      guestbook: 'pendingGuestbookEntries',
+      analytics: 'pendingAnalytics',
+      contact: 'pendingContactEntries',
+    } as const;
+
+    return storeMap[type];
+  }
+
+  private enqueueFallback(entry: PendingEntry): void {
+    this.fallbackQueues[entry.type].push(entry);
+  }
+
+  private removeFromFallback(type: PendingEntry['type'], id: string): void {
+    this.fallbackQueues[type] = this.fallbackQueues[type].filter((entry) => entry.id !== id);
+  }
+
+  private getFallbackEntries(type: PendingEntry['type']): PendingEntry[] {
+    return [...this.fallbackQueues[type]];
+  }
+
+  private async ensureDatabase(): Promise<IDBDatabase | null> {
+    if (!this.db) {
+      await this.init();
+    }
+
+    if (!this.db) {
+      if (!this.dbUnavailableWarningLogged) {
+        console.warn('Offline sync database unavailable - using in-memory fallback queue');
+        this.dbUnavailableWarningLogged = true;
+      }
+
+      return null;
+    }
+
+    this.dbUnavailableWarningLogged = false;
+    return this.db;
+  }
 
   async init(): Promise<void> {
     try {
@@ -32,12 +78,13 @@ class OfflineSync {
       if (db.version < this.dbVersion) {
         db.close();
         // Retry with upgrade handling
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           const request = indexedDB.open(this.dbName, this.dbVersion);
-          
+
           request.onerror = () => resolve(); // Graceful fallback
           request.onsuccess = () => {
             this.db = request.result;
+            this.dbUnavailableWarningLogged = false;
             resolve();
           };
           
@@ -64,6 +111,7 @@ class OfflineSync {
         });
       } else {
         this.db = db;
+        this.dbUnavailableWarningLogged = false;
       }
     } catch (error) {
       console.warn('OfflineSync initialization failed (Safari compatibility issue?):', error);
@@ -72,60 +120,99 @@ class OfflineSync {
 
   // Store data for later sync
   async storeForSync(type: PendingEntry['type'], data: any): Promise<string> {
-    if (!this.db) await this.init();
+    const db = await this.ensureDatabase();
 
-    const id = `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const id = `${type}_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
     const entry: PendingEntry = {
       id,
       data,
       timestamp: Date.now(),
-      type
+      type,
     };
 
+    if (!db) {
+      this.enqueueFallback(entry);
+      return entry.id;
+    }
+
+    const storeName = this.getStoreName(type);
+
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`], 'readwrite');
-      const store = transaction.objectStore(`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`);
+      const transaction = db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
       const request = store.add(entry);
 
       request.onsuccess = () => resolve(id);
-      request.onerror = () => reject(request.error);
+      request.onerror = () => {
+        this.enqueueFallback(entry);
+        reject(request.error);
+      };
     });
   }
 
   // Get all pending entries for sync
   async getPendingEntries(type: PendingEntry['type']): Promise<PendingEntry[]> {
-    if (!this.db) await this.init();
+    const fallbackEntries = this.getFallbackEntries(type);
+    const db = await this.ensureDatabase();
+
+    if (!db) {
+      return fallbackEntries;
+    }
+
+    const storeName = this.getStoreName(type);
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`], 'readonly');
-      const store = transaction.objectStore(`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`);
+      const transaction = db.transaction([storeName], 'readonly');
+      const store = transaction.objectStore(storeName);
       const request = store.getAll();
 
-      request.onsuccess = () => resolve(request.result || []);
+      request.onsuccess = () => {
+        const results = request.result || [];
+        const combined = [...results, ...fallbackEntries];
+        const uniqueEntries = Array.from(
+          new Map(combined.map((entry) => [entry.id, entry])).values()
+        );
+
+        resolve(uniqueEntries);
+      };
       request.onerror = () => reject(request.error);
     });
   }
 
   // Remove synced entry
   async removeSyncedEntry(type: PendingEntry['type'], id: string): Promise<void> {
-    if (!this.db) await this.init();
+    const db = await this.ensureDatabase();
+
+    if (!db) {
+      this.removeFromFallback(type, id);
+      return;
+    }
+
+    const storeName = this.getStoreName(type);
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`], 'readwrite');
-      const store = transaction.objectStore(`pending${this.capitalize(type)}${type === 'analytics' ? '' : 'Entries'}`);
+      const transaction = db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
       const request = store.delete(id);
 
-      request.onsuccess = () => resolve();
+      request.onsuccess = () => {
+        this.removeFromFallback(type, id);
+        resolve();
+      };
       request.onerror = () => reject(request.error);
     });
   }
 
   // Cache memorial data for offline viewing
   async cacheMemorial(memorial: any): Promise<void> {
-    if (!this.db) await this.init();
+    const db = await this.ensureDatabase();
+
+    if (!db) {
+      return;
+    }
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['cachedMemorials'], 'readwrite');
+      const transaction = db.transaction(['cachedMemorials'], 'readwrite');
       const store = transaction.objectStore('cachedMemorials');
       const request = store.put({
         ...memorial,
@@ -139,10 +226,14 @@ class OfflineSync {
 
   // Get cached memorial
   async getCachedMemorial(id: string): Promise<any | null> {
-    if (!this.db) await this.init();
+    const db = await this.ensureDatabase();
+
+    if (!db) {
+      return null;
+    }
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['cachedMemorials'], 'readonly');
+      const transaction = db.transaction(['cachedMemorials'], 'readonly');
       const store = transaction.objectStore('cachedMemorials');
       const request = store.get(id);
 
@@ -235,10 +326,6 @@ class OfflineSync {
     }
   }
 
-  private capitalize(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   // Register background sync if supported
   registerBackgroundSync(tag: string): void {
     if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
@@ -252,12 +339,16 @@ class OfflineSync {
 
   // Clean up old cached data
   async cleanup(): Promise<void> {
-    if (!this.db) await this.init();
+    const db = await this.ensureDatabase();
+
+    if (!db) {
+      return;
+    }
 
     const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
 
     // Clean up old cached memorials
-    const transaction = this.db!.transaction(['cachedMemorials'], 'readwrite');
+    const transaction = db.transaction(['cachedMemorials'], 'readwrite');
     const store = transaction.objectStore('cachedMemorials');
     const request = store.getAll();
 
@@ -276,4 +367,4 @@ class OfflineSync {
 export const offlineSync = new OfflineSync();
 
 // Note: Components should call offlineSync.init() and setup event listeners when ready,
-// not auto-initialize to avoid SSR issues 
+// not auto-initialize to avoid SSR issues

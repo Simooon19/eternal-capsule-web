@@ -359,33 +359,50 @@ export function useClientCache<T>(
   const [error, setError] = React.useState<Error | null>(null);
 
   React.useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         // Check cache first
         const cached = ClientCache.get<T>(key);
         if (cached !== null) {
-          setData(cached);
-          setLoading(false);
+          if (!cancelled) {
+            setData(cached);
+            setError(null);
+            setLoading(false);
+          }
           return;
         }
 
-        // Fetch fresh data
-        setLoading(true);
+        if (!cancelled) {
+          setLoading(true);
+        }
+
         const freshData = await fetcher();
-        
+
+        if (cancelled) return;
+
         // Cache the result
         ClientCache.set(key, freshData, ttlSeconds);
         setData(freshData);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'));
+        if (!cancelled) {
+          setError(err instanceof Error ? err : new Error('Unknown error'));
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [key, ttlSeconds]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fetcher, key, ttlSeconds]);
 
   const invalidate = React.useCallback(() => {
     ClientCache.remove(key);
