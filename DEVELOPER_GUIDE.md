@@ -1,6 +1,6 @@
-# CLAUDE.md
+# Developer Guide
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This guide summarizes the workflows, architecture, and common tasks for engineers working on the Minneslund digital memorial platform.
 
 ---
 
